@@ -1,4 +1,3 @@
-using Cqrs;
 using Cqrs.Events;
 using OrderDomain.Events;
 

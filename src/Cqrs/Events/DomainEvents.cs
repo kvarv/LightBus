@@ -5,7 +5,7 @@ namespace Cqrs.Events
 {
 	public static class DomainEvents
 	{
-		public static void Publish(Event @event)
+		public static void Publish<TEvent>(TEvent @event) where TEvent : Event
 		{
 			ObjectFactory.GetInstance<IDispatchEvents>().Dispatch(@event);
 		}

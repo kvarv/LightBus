@@ -4,6 +4,6 @@ namespace Cqrs
 {
 	public interface ISendCommands
 	{
-		void Send(Command command);
+		void Send<TCommand>(TCommand command) where TCommand : Command;
 	}
 }

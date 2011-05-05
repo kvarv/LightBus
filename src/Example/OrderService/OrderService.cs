@@ -1,5 +1,4 @@
 using System.ServiceModel;
-using Cqrs;
 using Cqrs.Commands;
 
 namespace OrderService

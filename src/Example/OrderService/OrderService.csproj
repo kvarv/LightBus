@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Commands\CreateOrderCommand.cs" />
     <Compile Include="CommandHandlers\CreateOrderHandler.cs" />
+    <Compile Include="Denormalizers\CreateOrderDenormalizer.cs" />
     <Compile Include="Infrastructure\StructureMapServiceHostFactory.cs" />
     <Compile Include="OrderService.cs" />
     <Compile Include="Program.cs" />
@@ -58,6 +59,7 @@
     <Compile Include="Infrastructure\StructureMapInstanceProvider.cs" />
     <Compile Include="Infrastructure\StructureMapServiceBehavior.cs" />
     <Compile Include="Infrastructure\StructureMapServiceHost.cs" />
+    <Compile Include="Queries\InMemoryRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Cqrs\Cqrs.csproj">
@@ -69,6 +71,7 @@
       <Name>OrderDomain</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

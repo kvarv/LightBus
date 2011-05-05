@@ -5,7 +5,7 @@ namespace Cqrs
 {
 	public interface IPublishEvents
 	{
-		void Publish(Event @event);
+		void Publish<TEvent>(TEvent @event) where TEvent : Event;
 		void Subscribe<TEvent>(Action<TEvent> handle) where TEvent : Event;
 	}
 }

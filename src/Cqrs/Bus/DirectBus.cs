@@ -15,7 +15,7 @@ namespace Cqrs.Bus
 			_commandDispatcher = commandDispatcher;
 		}
 
-		public void Publish(Event @event)
+		public void Publish<TEvent>(TEvent @event) where TEvent : Event
 		{
 			_eventDispatcher.Dispatch(@event);
 		}
@@ -25,7 +25,7 @@ namespace Cqrs.Bus
 			_eventDispatcher.RegisterHandler(handle);
 		}
 
-		public void Send(Command command)
+		public void Send<TCommand>(TCommand command) where TCommand : Command
 		{
 			_commandDispatcher.Dispatch(command);
 		}
