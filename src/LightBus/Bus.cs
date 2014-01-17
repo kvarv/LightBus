@@ -11,8 +11,6 @@ namespace LightBus
     {
         private readonly ServiceContainer _container;
 
-        private readonly List<Delegate> _eventCallbacks = new List<Delegate>();
-
         private Bus(ServiceContainer container)
         {
             _container = container;
@@ -30,13 +28,6 @@ namespace LightBus
         {
             var handlers = _container.GetAllInstances<IHandle<TEvent>>().ToList();
             handlers.ForEach(handler => handler.Handle(@event));
-            _eventCallbacks.ForEach(callback =>
-            {
-                if (callback is Action<TEvent>)
-                {
-                    ((Action<TEvent>)callback)(@event);
-                }
-            });
         }
 
         public void Send<TCommand>(TCommand command) where TCommand : Command
