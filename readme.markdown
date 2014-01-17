@@ -1,3 +1,3 @@
-Cqrs#
+**LightBus**
 --
-Cqrs# is a lightweight CQRS framework.
+**LightBus** is a lightweight in-process bus
