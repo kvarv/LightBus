@@ -58,6 +58,8 @@
     <Compile Include="TestEvent.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="TestCommand.cs" />
+    <Compile Include="TestRequest.cs" />
+    <Compile Include="TestResponse.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LightBus\LightBus.csproj">

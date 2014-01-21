@@ -2,7 +2,7 @@
 {
     using LightBus;
 
-    public class TestEvent : Event
+    public class TestEvent : IEvent
 	{
 		public int NumberOfTimesHandled { get; set; }
 	}

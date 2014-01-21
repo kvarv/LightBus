@@ -13,46 +13,63 @@ namespace LightBus
             _getAllHandlerInstancesFunc = getAllHandlerInstancesFunc;
         }
 
-        public void Publish<TEvent>(TEvent @event) where TEvent : Event
+        public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
         {
-            var handlers = GetAllHandlers(typeof (TEvent));
-            var typeSaveHandlers = handlers.Cast<IHandle<TEvent>>();
+            var handlers = GetAllMessageHandlers(typeof (TEvent));
+            var typeSaveHandlers = handlers.Cast<IHandleMessages<TEvent>>();
             foreach (var handler in typeSaveHandlers)
             {
                 handler.Handle(@event);
             }
         }
 
-        public void Send<TCommand>(TCommand command) where TCommand : Command
+        public void Send<TCommand>(TCommand command) where TCommand : ICommand
         {
             var commandType = typeof (TCommand);
-            var handlers = GetAllHandlers(commandType).ToList();
-            CheckIfThereAreAnyCommandHandlers(handlers, commandType);
-            CheckIfThereIsMoreThanOneCommandHandler(handlers, commandType);
-            var handler = handlers.Cast<IHandle<TCommand>>().Single();
+            var handlers = GetAllMessageHandlers(commandType).ToList();
+            CheckIfThereAreAnyHandlers(handlers, commandType);
+            CheckIfThereIsMoreThanOneHandler(handlers, commandType);
+            var handler = (IHandleMessages<TCommand>) handlers.Single();
             handler.Handle(command);
         }
 
-        private static void CheckIfThereIsMoreThanOneCommandHandler(IEnumerable<object> handlers, Type commandType)
+        public TResponse Send<TResponse>(IRequest<TResponse> request)
+        {
+            var requestType = request.GetType();
+            var handlers = GetAllRequestHandlers(requestType, typeof(TResponse)).ToList();
+            CheckIfThereAreAnyHandlers(handlers, requestType);
+            CheckIfThereIsMoreThanOneHandler(handlers, requestType);
+            var handler = handlers.Single();
+            return (TResponse) handler.GetType().GetMethod("Handle").Invoke(handler, new object[] {request});
+        }
+
+        private static void CheckIfThereIsMoreThanOneHandler(IEnumerable<object> handlers, Type messageType)
         {
             if (handlers.Count() > 1)
             {
-                throw new NotSupportedException(string.Format("There are more than one handler registered for the command {0}. A command should only have one handler.", commandType.FullName));
+                throw new NotSupportedException(string.Format("There are more than one handler registered for {0}. A command should only have one handler.", messageType.FullName));
             }
         }
 
-        private static void CheckIfThereAreAnyCommandHandlers(IEnumerable<object> handlers, Type commandType)
+        private static void CheckIfThereAreAnyHandlers(IEnumerable<object> handlers, Type messageType)
         {
             if (!handlers.Any())
             {
-                throw new NotSupportedException(string.Format("There is no handler registered for the command {0}.", commandType.FullName));
+                throw new NotSupportedException(string.Format("There is no handler registered for the {0}.", messageType.FullName));
             }
         }
 
-        private IEnumerable<object> GetAllHandlers(Type genericArgumentType)
+        private IEnumerable<object> GetAllMessageHandlers(Type genericArgumentType)
         {
-            var handlerType = typeof (IHandle<>).MakeGenericType(genericArgumentType);
-            var handlers = _getAllHandlerInstancesFunc(handlerType);
+            var genericHandlerType = typeof (IHandleMessages<>).MakeGenericType(genericArgumentType);
+            var handlers = _getAllHandlerInstancesFunc(genericHandlerType);
+            return handlers;
+        }
+
+        private IEnumerable<object> GetAllRequestHandlers(Type requestType, Type responseType)
+        {
+            var genericHandlerType = typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);
+            var handlers = _getAllHandlerInstancesFunc(genericHandlerType);
             return handlers;
         }
     }

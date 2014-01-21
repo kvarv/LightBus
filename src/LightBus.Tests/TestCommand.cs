@@ -2,7 +2,7 @@
 {
     using LightBus;
 
-    public class TestCommand : Command
+    public class TestCommand : ICommand
 	{
 		public bool IsHandled { get;  set; }
 	}
