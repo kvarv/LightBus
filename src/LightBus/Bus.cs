@@ -1,7 +1,6 @@
 namespace LightBus
 {
     using System;
-    using System.Collections.Generic;
     using System.Linq;
     using System.Reflection;
 
@@ -26,17 +25,24 @@ namespace LightBus
 
         public void Publish<TEvent>(TEvent @event) where TEvent : Event
         {
-            var handlers = _container.GetAllInstances<IHandle<TEvent>>().ToList();
-            handlers.ForEach(handler => handler.Handle(@event));
+            var handlerType = typeof(IHandle<>).MakeGenericType(typeof(TEvent));
+            var handlers = _container.GetAllInstances(handlerType);
+            var typeSaveHandlers = handlers.Cast<IHandle<TEvent>>();
+            foreach (var handler in typeSaveHandlers)
+            {
+                handler.Handle(@event);
+            }
         }
 
         public void Send<TCommand>(TCommand command) where TCommand : Command
         {
-            var handler = _container.TryGetInstance<IHandle<TCommand>>();
-            if (handler == null)
+            var handlerType = typeof(IHandle<>).MakeGenericType(typeof(TCommand));
+            var handlers = _container.GetAllInstances(handlerType);
+            if (handlers.Count() != 1)
             {
-                throw new InvalidOperationException(string.Format("You either have not specified a handler, or you have specified more than one handler for the command {0}.", typeof(TCommand).FullName));
+                throw new InvalidOperationException(string.Format("You either have not specified a handler, or you have specified more than one handler for the command {0}.", typeof(TCommand).FullName));                
             }
+            var handler = handlers.Cast<IHandle<TCommand>>().Single();
             handler.Handle(command);
         }
     }
