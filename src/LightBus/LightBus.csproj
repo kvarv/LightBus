@@ -45,7 +45,6 @@
   <ItemGroup>
     <Compile Include="Command.cs" />
     <Compile Include="Bus.cs" />
-    <Compile Include="CompositionRoot.cs" />
     <Compile Include="DomainEvents.cs" />
     <Compile Include="Event.cs" />
     <Compile Include="IBus.cs" />
@@ -53,11 +52,7 @@
     <Compile Include="IHandle.cs" />
     <Compile Include="IPublishEvents.cs" />
     <Compile Include="ISendCommands.cs" />
-    <Compile Include="LightInject\LightInject.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

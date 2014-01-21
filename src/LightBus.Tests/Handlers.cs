@@ -10,13 +10,13 @@ namespace LightBus.Tests
 		}
 	}
 
-    //public class TestCommandHandler2 : IHandle<TestCommand>
-    //{
-    //    public void Handle(TestCommand command)
-    //    {
-    //        command.IsHandled = true;
-    //    }
-    //}
+    public class AnotherTestCommandHandler : IHandle<TestCommand>
+    {
+        public void Handle(TestCommand command)
+        {
+            command.IsHandled = true;
+        }
+    }
 
 	public class TestEventHandler : IHandle<TestEvent>
 	{
