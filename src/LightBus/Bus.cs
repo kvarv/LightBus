@@ -6,11 +6,16 @@ namespace LightBus
 
     public class Bus : IBus
     {
-        private readonly Func<Type, IEnumerable<object>> _getAllHandlerInstancesFunc;
+        private readonly Func<Type, IEnumerable<object>> _getAllHandlersForMessageTypeFunc;
 
-        public Bus(Func<Type, IEnumerable<object>> getAllHandlerInstancesFunc)
+        public Bus(Func<Type, IEnumerable<object>> getAllHandlersForMessageTypeFunc)
         {
-            _getAllHandlerInstancesFunc = getAllHandlerInstancesFunc;
+            _getAllHandlersForMessageTypeFunc = getAllHandlersForMessageTypeFunc;
+        }
+
+        public Bus(IConfigurator configurator)
+        {
+            _getAllHandlersForMessageTypeFunc = configurator.GetAllHandlersForMessageType;
         }
 
         public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
@@ -62,14 +67,14 @@ namespace LightBus
         private IEnumerable<object> GetAllMessageHandlers(Type genericArgumentType)
         {
             var genericHandlerType = typeof (IHandleMessages<>).MakeGenericType(genericArgumentType);
-            var handlers = _getAllHandlerInstancesFunc(genericHandlerType);
+            var handlers = _getAllHandlersForMessageTypeFunc(genericHandlerType);
             return handlers;
         }
 
         private IEnumerable<object> GetAllRequestHandlers(Type requestType, Type responseType)
         {
             var genericHandlerType = typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);
-            var handlers = _getAllHandlerInstancesFunc(genericHandlerType);
+            var handlers = _getAllHandlersForMessageTypeFunc(genericHandlerType);
             return handlers;
         }
     }
