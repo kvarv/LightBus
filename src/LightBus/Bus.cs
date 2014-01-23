@@ -38,7 +38,7 @@ namespace LightBus
             handler.Handle(command);
         }
 
-        public TResponse Send<TResponse>(IRequest<TResponse> request)
+        public TResponse Get<TResponse>(IRequest<TResponse> request)
         {
             var requestType = request.GetType();
             var handlers = GetAllRequestHandlers(requestType, typeof(TResponse)).ToList();

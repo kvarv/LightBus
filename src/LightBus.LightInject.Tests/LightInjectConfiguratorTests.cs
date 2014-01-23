@@ -1,6 +1,9 @@
-﻿namespace LightBus.Configurator.LightInject.Tests
+﻿namespace LightBus.LightInject.Tests
 {
+    using LightBus.LightInject;
+
     using Xunit;
+
     using global::LightInject;
 
     public class LightInjectConfiguratorTests
@@ -15,7 +18,7 @@
             
             Assert.DoesNotThrow(() => bus.Send(new TestCommand()));
             Assert.DoesNotThrow(() => bus.Publish(new TestEvent()));
-            Assert.DoesNotThrow(() => ((ISendRequests)bus).Send(new TestRequest()));
+            Assert.DoesNotThrow(() => ((ISendRequests)bus).Get(new TestRequest()));
         }
     }
 }

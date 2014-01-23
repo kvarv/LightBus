@@ -1,4 +1,4 @@
-namespace LightBus.Configurator.LightInject.Tests
+namespace LightBus.LightInject.Tests
 {
     public class TestCommandHandler : IHandleMessages<TestCommand>
 	{

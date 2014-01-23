@@ -1,8 +1,9 @@
-﻿namespace LightBus.Configurator.LightInject
+﻿namespace LightBus.LightInject
 {
     using System;
     using System.Collections.Generic;
     using System.Reflection;
+
     using global::LightInject;
 
     public class LightInjectConfigurator : IConfigurator
