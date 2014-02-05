@@ -6,7 +6,7 @@ namespace LightBus
 
     public class Bus : IBus
     {
-        private DependencyResolver _dependencyResolver;
+        private readonly DependencyResolver _dependencyResolver;
 
         public Bus(Func<Type, IEnumerable<object>> getAllInstancesOfType)
         {

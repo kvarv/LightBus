@@ -90,5 +90,21 @@ namespace LightBus.Tests
 
             Assert.Throws<NotSupportedException>(() => bus.Get(request));
         }
+
+        [Fact]
+        public void When_sending_the_same_event_multiple_times_should_get_handlers_from_cahce()
+        {
+            var serviceContainer = new ServiceContainer();
+            serviceContainer.RegisterAssembly(typeof(BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>));
+            var bus = new Bus(serviceContainer.GetAllInstances);
+            var message = new TestEvent();
+
+            Assert.DoesNotThrow(() =>
+                {
+                    bus.Publish(message);
+                    bus.Publish(message);
+                    bus.Publish(message);
+                });
+        }
     }
 }
