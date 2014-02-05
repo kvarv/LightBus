@@ -7,6 +7,6 @@
     public interface IConfigurator
     {
         void RegisterHandlersFrom(params Assembly[] assemblies);
-        Func<Type, IEnumerable<object>> GetAllHandlersForMessageType { get; }
+        Func<Type, IEnumerable<object>> GetAllInstancesOfType { get; }
     }
 }

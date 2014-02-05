@@ -23,7 +23,7 @@
             }
         }
 
-        public Func<Type, IEnumerable<object>> GetAllHandlersForMessageType
+        public Func<Type, IEnumerable<object>> GetAllInstancesOfType
         {
             get { return _serviceContainer.GetAllInstances; }
         }

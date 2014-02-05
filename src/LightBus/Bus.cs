@@ -6,21 +6,21 @@ namespace LightBus
 
     public class Bus : IBus
     {
-        private readonly Func<Type, IEnumerable<object>> _getAllHandlersForMessageTypeFunc;
+        private DependencyResolver _dependencyResolver;
 
-        public Bus(Func<Type, IEnumerable<object>> getAllHandlersForMessageTypeFunc)
+        public Bus(Func<Type, IEnumerable<object>> getAllInstancesOfType)
         {
-            _getAllHandlersForMessageTypeFunc = getAllHandlersForMessageTypeFunc;
+            _dependencyResolver = new DependencyResolver(getAllInstancesOfType);
         }
 
         public Bus(IConfigurator configurator)
         {
-            _getAllHandlersForMessageTypeFunc = configurator.GetAllHandlersForMessageType;
+            _dependencyResolver = new DependencyResolver(configurator.GetAllInstancesOfType);
         }
 
         public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
         {
-            var handlers = GetAllMessageHandlers(typeof (TEvent));
+            var handlers = _dependencyResolver.GetAllMessageHandlers(typeof (TEvent));
             var typeSaveHandlers = handlers.Cast<IHandleMessages<TEvent>>();
             foreach (var handler in typeSaveHandlers)
             {
@@ -31,7 +31,7 @@ namespace LightBus
         public void Send<TCommand>(TCommand command) where TCommand : ICommand
         {
             var commandType = typeof (TCommand);
-            var handlers = GetAllMessageHandlers(commandType).ToList();
+            var handlers = _dependencyResolver.GetAllMessageHandlers(commandType).ToList();
             CheckIfThereAreAnyHandlers(handlers, commandType);
             CheckIfThereIsMoreThanOneHandler(handlers, commandType);
             var handler = (IHandleMessages<TCommand>) handlers.Single();
@@ -41,11 +41,11 @@ namespace LightBus
         public TResponse Get<TResponse>(IRequest<TResponse> request)
         {
             var requestType = request.GetType();
-            var handlers = GetAllRequestHandlers(requestType, typeof(TResponse)).ToList();
+            var handlers = _dependencyResolver.GetAllRequestHandlers(requestType, typeof(TResponse)).ToList();
             CheckIfThereAreAnyHandlers(handlers, requestType);
             CheckIfThereIsMoreThanOneHandler(handlers, requestType);
             var handler = handlers.Single();
-            return (TResponse) handler.GetType().GetMethod("Handle").Invoke(handler, new object[] {request});
+            return (TResponse)handler.GetType().GetMethod("Handle").Invoke(handler, new object[] { request });
         }
 
         private static void CheckIfThereIsMoreThanOneHandler(IEnumerable<object> handlers, Type messageType)
@@ -62,20 +62,6 @@ namespace LightBus
             {
                 throw new NotSupportedException(string.Format("There is no handler registered for the {0}.", messageType.FullName));
             }
-        }
-
-        private IEnumerable<object> GetAllMessageHandlers(Type genericArgumentType)
-        {
-            var genericHandlerType = typeof (IHandleMessages<>).MakeGenericType(genericArgumentType);
-            var handlers = _getAllHandlersForMessageTypeFunc(genericHandlerType);
-            return handlers;
-        }
-
-        private IEnumerable<object> GetAllRequestHandlers(Type requestType, Type responseType)
-        {
-            var genericHandlerType = typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);
-            var handlers = _getAllHandlersForMessageTypeFunc(genericHandlerType);
-            return handlers;
         }
     }
 }
