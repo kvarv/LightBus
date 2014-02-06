@@ -21,9 +21,9 @@ namespace LightBus
         public void Publish(IEvent message)
         {
             var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());
-            foreach (var handler in handlers)
+            foreach (dynamic handler in handlers)
             {
-                handler.GetType().GetMethod("Handle").Invoke(handler, new object[] { message });
+                handler.Handle((dynamic)message);
             }
         }
 
@@ -33,8 +33,8 @@ namespace LightBus
             var handlers = _dependencyResolver.GetAllMessageHandlers(commandType).ToList();
             CheckIfThereAreAnyHandlers(handlers, commandType);
             CheckIfThereIsMoreThanOneHandler(handlers, commandType);
-            var handler = handlers.Single();
-            handler.GetType().GetMethod("Handle").Invoke(handler, new object[] { message });
+            dynamic handler = handlers.Single();
+            handler.Handle((dynamic)message);            
         }
 
         public TResponse Send<TResponse>(IRequest<TResponse> request)
@@ -43,15 +43,15 @@ namespace LightBus
             var handlers = _dependencyResolver.GetAllRequestHandlers(requestType, typeof (TResponse)).ToList();
             CheckIfThereAreAnyHandlers(handlers, requestType);
             CheckIfThereIsMoreThanOneHandler(handlers, requestType);
-            var handler = handlers.Single();
-            return (TResponse) handler.GetType().GetMethod("Handle").Invoke(handler, new object[] {request});
+            dynamic handler = handlers.Single();
+            return (TResponse) handler.Handle((dynamic)request);
         }
 
         private static void CheckIfThereIsMoreThanOneHandler(IEnumerable<object> handlers, Type messageType)
         {
             if (handlers.Count() > 1)
             {
-                throw new NotSupportedException(string.Format("There are more than one handler registered for {0}. A command should only have one handler.", messageType.FullName));
+                throw new NotSupportedException(string.Format("There are more than one handler registered for {0}. This message should only have one handler.", messageType.FullName));
             }
         }
 
