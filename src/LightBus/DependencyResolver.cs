@@ -14,23 +14,22 @@ namespace LightBus
             _getAllInstancesOfType = getAllInstancesOfType;
         }
 
-        public IEnumerable<object> GetAllMessageHandlers(Type genericArgumentType)
+        public IEnumerable<object> GetAllMessageHandlers(Type messageType)
         {
-            var genericHandlerType = typeof (IHandleMessages<>).MakeGenericType(genericArgumentType);
-            var handlers = GetHandlers(genericHandlerType);
-            return handlers;
+            return _cache.GetOrAdd(messageType, _ =>
+                {
+                    var handlerType = typeof (IHandleMessages<>).MakeGenericType(messageType);
+                    return _getAllInstancesOfType(handlerType);
+                });
         }
 
         public IEnumerable<object> GetAllRequestHandlers(Type requestType, Type responseType)
         {
-            var genericHandlerType = typeof (IHandleRequests<,>).MakeGenericType(requestType, responseType);
-            var handlers = GetHandlers(genericHandlerType);
-            return handlers;
-        }
-
-        private IEnumerable<object> GetHandlers(Type type)
-        {
-            return _cache.GetOrAdd(type, _getAllInstancesOfType);
+            return _cache.GetOrAdd(requestType, _ =>
+                {
+                    var handlerType = typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);                
+                    return _getAllInstancesOfType(handlerType);
+                });
         }
     }
 }
