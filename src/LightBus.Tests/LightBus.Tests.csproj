@@ -60,10 +60,6 @@
     <Compile Include="TestResponse.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\LightBus.LightInject\LightBus.LightInject.csproj">
-      <Project>{A9B3ED58-2D55-4C74-85A4-C275D6EE9303}</Project>
-      <Name>LightBus.LightInject</Name>
-    </ProjectReference>
     <ProjectReference Include="..\LightBus\LightBus.csproj">
       <Project>{D594FE62-7C7E-4B34-817A-4A477819CF99}</Project>
       <Name>LightBus</Name>

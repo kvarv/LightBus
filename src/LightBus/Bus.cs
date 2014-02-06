@@ -13,11 +13,6 @@ namespace LightBus
             _dependencyResolver = new DependencyResolver(getAllInstancesOfType);
         }
 
-        public Bus(IConfigurator configurator)
-        {
-            _dependencyResolver = new DependencyResolver(configurator.GetAllInstancesOfType);
-        }
-
         public void Publish(IEvent message)
         {
             var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());
