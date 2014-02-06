@@ -1,14 +1,12 @@
 namespace LightBus.Tests
 {
-    using LightBus;
-
     public class TestCommandHandler : IHandleMessages<TestCommand>
-	{
-		public void Handle(TestCommand command)
-		{
-			command.IsHandled = true;
-		}
-	}
+    {
+        public void Handle(TestCommand command)
+        {
+            command.IsHandled = true;
+        }
+    }
 
     public class AnotherTestCommandHandler : IHandleMessages<TestCommand>
     {
@@ -18,21 +16,21 @@ namespace LightBus.Tests
         }
     }
 
-	public class TestEventHandler : IHandleMessages<TestEvent>
-	{
-		public void Handle(TestEvent @event)
-		{
-			@event.NumberOfTimesHandled++;
-		}
-	}
+    public class TestEventHandler : IHandleMessages<TestEvent>
+    {
+        public void Handle(TestEvent @event)
+        {
+            @event.NumberOfTimesHandled++;
+        }
+    }
 
-	public class TestEventHandler2 : IHandleMessages<TestEvent>
-	{
-		public void Handle(TestEvent @event)
-		{
-			@event.NumberOfTimesHandled++;
-		}
-	}
+    public class TestEventHandler2 : IHandleMessages<TestEvent>
+    {
+        public void Handle(TestEvent @event)
+        {
+            @event.NumberOfTimesHandled++;
+        }
+    }
 
     public class TestRequestHandler : IHandleRequests<TestRequest, TestResponse>
     {
@@ -46,7 +44,7 @@ namespace LightBus.Tests
     {
         public TestResponse Handle(TestRequest command)
         {
-            return new TestResponse { IsHandled = true };
+            return new TestResponse {IsHandled = true};
         }
     }
 }

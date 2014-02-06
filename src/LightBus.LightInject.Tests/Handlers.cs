@@ -1,22 +1,22 @@
 namespace LightBus.LightInject.Tests
 {
     public class TestCommandHandler : IHandleMessages<TestCommand>
-	{
-		public void Handle(TestCommand command)
-		{
-		}
-	}
+    {
+        public void Handle(TestCommand command)
+        {
+        }
+    }
 
     public class TestCommand : ICommand
     {
     }
 
-	public class TestEventHandler : IHandleMessages<TestEvent>
-	{
-		public void Handle(TestEvent @event)
-		{
-		}
-	}
+    public class TestEventHandler : IHandleMessages<TestEvent>
+    {
+        public void Handle(TestEvent @event)
+        {
+        }
+    }
 
     public class TestEvent : IEvent
     {

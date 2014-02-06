@@ -1,9 +1,9 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
 namespace LightBus
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
-
     public class Bus : IBus
     {
         private readonly DependencyResolver _dependencyResolver;
@@ -41,11 +41,11 @@ namespace LightBus
         public TResponse Get<TResponse>(IRequest<TResponse> request)
         {
             var requestType = request.GetType();
-            var handlers = _dependencyResolver.GetAllRequestHandlers(requestType, typeof(TResponse)).ToList();
+            var handlers = _dependencyResolver.GetAllRequestHandlers(requestType, typeof (TResponse)).ToList();
             CheckIfThereAreAnyHandlers(handlers, requestType);
             CheckIfThereIsMoreThanOneHandler(handlers, requestType);
             var handler = handlers.Single();
-            return (TResponse)handler.GetType().GetMethod("Handle").Invoke(handler, new object[] { request });
+            return (TResponse) handler.GetType().GetMethod("Handle").Invoke(handler, new object[] {request});
         }
 
         private static void CheckIfThereIsMoreThanOneHandler(IEnumerable<object> handlers, Type messageType)

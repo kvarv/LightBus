@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+
 namespace LightBus
 {
-    using System;
-    using System.Collections.Concurrent;
-    using System.Collections.Generic;
-
     public class DependencyResolver
     {
-        private readonly Func<Type, IEnumerable<object>> _getAllInstancesOfType;
         private readonly ConcurrentDictionary<Type, IEnumerable<object>> _cache = new ConcurrentDictionary<Type, IEnumerable<object>>();
+        private readonly Func<Type, IEnumerable<object>> _getAllInstancesOfType;
 
         public DependencyResolver(Func<Type, IEnumerable<object>> getAllInstancesOfType)
         {
@@ -27,7 +27,7 @@ namespace LightBus
         {
             return _cache.GetOrAdd(requestType, _ =>
                 {
-                    var handlerType = typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);                
+                    var handlerType = typeof (IHandleRequests<,>).MakeGenericType(requestType, responseType);
                     return _getAllInstancesOfType(handlerType);
                 });
         }

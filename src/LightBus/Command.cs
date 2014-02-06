@@ -1,7 +1,6 @@
 namespace LightBus
 {
-	public interface ICommand : IMessage
-	{
-		
-	}
+    public interface ICommand : IMessage
+    {
+    }
 }

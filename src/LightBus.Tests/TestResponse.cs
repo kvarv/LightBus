@@ -2,6 +2,6 @@
 {
     public class TestResponse
     {
-        public bool IsHandled { get;  set; }
+        public bool IsHandled { get; set; }
     }
 }

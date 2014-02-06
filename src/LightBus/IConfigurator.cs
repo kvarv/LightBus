@@ -1,12 +1,12 @@
-﻿namespace LightBus
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Reflection;
 
+namespace LightBus
+{
     public interface IConfigurator
     {
-        void RegisterHandlersFrom(params Assembly[] assemblies);
         Func<Type, IEnumerable<object>> GetAllInstancesOfType { get; }
+        void RegisterHandlersFrom(params Assembly[] assemblies);
     }
 }

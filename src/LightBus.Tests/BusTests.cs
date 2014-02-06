@@ -1,18 +1,17 @@
+using System;
+using LightBus.Tests.LightInject;
+using Should;
+using Xunit;
+
 namespace LightBus.Tests
 {
-    using System;
-    using Should;
-    using Xunit;
-
-    using global::LightInject;
-
     public class BusTests
     {
         [Fact]
         public void When_sending_a_command_and_there_is_only_one_command_handler_should_invoke_command_handler()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleMessages<TestCommand>,TestCommandHandler>();
+            serviceContainer.Register<IHandleMessages<TestCommand>, TestCommandHandler>();
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new TestCommand();
 
@@ -25,7 +24,7 @@ namespace LightBus.Tests
         public void When_sending_a_command_and_there_is_multiple_command_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleMessages<TestCommand>, TestCommandHandler>();            
+            serviceContainer.Register<IHandleMessages<TestCommand>, TestCommandHandler>();
             serviceContainer.Register<IHandleMessages<TestCommand>, AnotherTestCommandHandler>("another");
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new TestCommand();
@@ -95,7 +94,7 @@ namespace LightBus.Tests
         public void When_sending_the_same_event_multiple_times_should_get_handlers_from_cahce()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.RegisterAssembly(typeof(BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>));
+            serviceContainer.RegisterAssembly(typeof (BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof (IHandleMessages<>));
             var bus = new Bus(serviceContainer.GetAllInstances);
             var message = new TestEvent();
 
