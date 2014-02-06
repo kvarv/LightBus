@@ -46,7 +46,6 @@
     <Compile Include="Command.cs" />
     <Compile Include="Bus.cs" />
     <Compile Include="DependencyResolver.cs" />
-    <Compile Include="DomainEvents.cs" />
     <Compile Include="IConfigurator.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IBus.cs" />

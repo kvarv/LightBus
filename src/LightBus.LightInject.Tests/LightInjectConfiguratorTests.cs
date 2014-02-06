@@ -15,7 +15,7 @@ namespace LightBus.LightInject.Tests
 
             Assert.DoesNotThrow(() => bus.Send(new TestCommand()));
             Assert.DoesNotThrow(() => bus.Publish(new TestEvent()));
-            Assert.DoesNotThrow(() => bus.Get(new TestRequest()));
+            Assert.DoesNotThrow(() => bus.Send(new TestRequest()));
         }
     }
 }

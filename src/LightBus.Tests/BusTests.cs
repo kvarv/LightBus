@@ -63,7 +63,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var request = new TestRequest();
 
-            var response = bus.Get(request);
+            var response = bus.Send(request);
 
             response.IsHandled.ShouldBeTrue();
         }
@@ -77,7 +77,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var request = new TestRequest();
 
-            Assert.Throws<NotSupportedException>(() => bus.Get(request));
+            Assert.Throws<NotSupportedException>(() => bus.Send(request));
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var request = new TestRequest();
 
-            Assert.Throws<NotSupportedException>(() => bus.Get(request));
+            Assert.Throws<NotSupportedException>(() => bus.Send(request));
         }
 
         [Fact]

@@ -18,27 +18,26 @@ namespace LightBus
             _dependencyResolver = new DependencyResolver(configurator.GetAllInstancesOfType);
         }
 
-        public void Publish<TEvent>(TEvent @event) where TEvent : IEvent
+        public void Publish(IEvent message)
         {
-            var handlers = _dependencyResolver.GetAllMessageHandlers(typeof (TEvent));
-            var typeSaveHandlers = handlers.Cast<IHandleMessages<TEvent>>();
-            foreach (var handler in typeSaveHandlers)
+            var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());
+            foreach (var handler in handlers)
             {
-                handler.Handle(@event);
+                handler.GetType().GetMethod("Handle").Invoke(handler, new object[] { message });
             }
         }
 
-        public void Send<TCommand>(TCommand command) where TCommand : ICommand
+        public void Send(ICommand message)
         {
-            var commandType = typeof (TCommand);
+            var commandType = message.GetType();
             var handlers = _dependencyResolver.GetAllMessageHandlers(commandType).ToList();
             CheckIfThereAreAnyHandlers(handlers, commandType);
             CheckIfThereIsMoreThanOneHandler(handlers, commandType);
-            var handler = (IHandleMessages<TCommand>) handlers.Single();
-            handler.Handle(command);
+            var handler = handlers.Single();
+            handler.GetType().GetMethod("Handle").Invoke(handler, new object[] { message });
         }
 
-        public TResponse Get<TResponse>(IRequest<TResponse> request)
+        public TResponse Send<TResponse>(IRequest<TResponse> request)
         {
             var requestType = request.GetType();
             var handlers = _dependencyResolver.GetAllRequestHandlers(requestType, typeof (TResponse)).ToList();
