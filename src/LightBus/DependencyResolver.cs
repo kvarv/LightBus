@@ -6,7 +6,7 @@ namespace LightBus
 {
     public class DependencyResolver
     {
-        private readonly ConcurrentDictionary<Type, IEnumerable<object>> _cache = new ConcurrentDictionary<Type, IEnumerable<object>>();
+        private readonly ConcurrentDictionary<Type, Type> _cache = new ConcurrentDictionary<Type, Type>();
         private readonly Func<Type, IEnumerable<object>> _getAllInstancesOfType;
 
         public DependencyResolver(Func<Type, IEnumerable<object>> getAllInstancesOfType)
@@ -16,20 +16,20 @@ namespace LightBus
 
         public IEnumerable<object> GetAllMessageHandlers(Type messageType)
         {
-            return _cache.GetOrAdd(messageType, _ =>
-                {
-                    var handlerType = typeof (IHandleMessages<>).MakeGenericType(messageType);
-                    return _getAllInstancesOfType(handlerType);
-                });
+            Func<Type, Type> handlerTypeFactory = t => typeof(IHandleMessages<>).MakeGenericType(t);
+            return GetAllInstancesOfType(messageType, handlerTypeFactory);
         }
 
         public IEnumerable<object> GetAllRequestHandlers(Type requestType, Type responseType)
         {
-            return _cache.GetOrAdd(requestType, _ =>
-                {
-                    var handlerType = typeof (IHandleRequests<,>).MakeGenericType(requestType, responseType);
-                    return _getAllInstancesOfType(handlerType);
-                });
+            Func<Type, Type> handlerTypeFactory = t => typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);
+            return GetAllInstancesOfType(requestType, handlerTypeFactory);
+        }
+
+        private IEnumerable<object> GetAllInstancesOfType(Type messageType, Func<Type, Type> handlerTypeFactory)
+        {
+            var handlerType = _cache.GetOrAdd(messageType, handlerTypeFactory);
+            return _getAllInstancesOfType(handlerType);
         }
     }
 }
