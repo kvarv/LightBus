@@ -11,7 +11,6 @@
 [Dd]ebugPublic/
 [Rr]elease/
 x64/
-build/
 bld/
 [Bb]in/
 [Oo]bj/
@@ -180,5 +179,5 @@ Desktop.ini
 # Recycle Bin used on file shares
 $RECYCLE.BIN/
 
-packages
-build_artifacts
+packages/
+build_artifacts/
