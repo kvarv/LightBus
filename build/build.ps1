@@ -14,7 +14,7 @@ properties {
 	$assembly_file_version = $assembly_version
 }
 
-task default -depends compile, test
+task default -depends compile, test, reset_assembly_info
 
 task mark_release {
     $global:build_configuration = "Release"
@@ -34,9 +34,12 @@ task test {
 	exec { & $tools_dir\xunit\xunit.console.clr4.exe $testassemblies /xml $test_dir\tests_results.xml }
 }
 
-task create_package -depends mark_release, compile, test, create_nuspec -precondition { return $version -ne ''} {
+task create_package -depends mark_release, compile, test, create_nuspec, reset_assembly_info -precondition { return $version -ne ''} {
 	exec { & $source_dir\.nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
-	
+}
+
+task reset_assembly_info {
+	git checkout $source_dir\CommonAssemblyInfo.cs
 }
 
 task create_nuspec {
