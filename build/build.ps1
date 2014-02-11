@@ -10,13 +10,14 @@ properties {
 	$test_dir = "$build_artifacts_dir\tests"
 	$global:build_configuration = "Debug"
 	$nuspec_file = "$build_artifacts_dir\LightBus.nuspec"
-	$version = "0.1.0"
+	$assembly_version = if($version) { $version } else { "0.0.0" }
+	$assembly_file_version = $assembly_version
 }
 
 task default -depends compile, test
 
-task release {
-    $global:build_configuration = "release"
+task mark_release {
+    $global:build_configuration = "Release"
 }
 
 task clean {
@@ -24,7 +25,7 @@ task clean {
 	mkdir $build_artifacts_dir  -ErrorAction SilentlyContinue  | out-null
 }
 
-task compile -depends clean {
+task compile -depends clean, create_common_assembly_info {
 	exec { msbuild  $source_dir\LightBus.sln /t:Clean /t:Build /p:Configuration=$build_configuration /v:q /nologo }
 }
 
@@ -33,8 +34,9 @@ task test {
 	exec { & $tools_dir\xunit\xunit.console.clr4.exe $testassemblies /xml $test_dir\tests_results.xml }
 }
 
-task create_package -depends compile, test, create_nuspec {
+task create_package -depends mark_release, compile, test, create_nuspec -precondition { return $version -ne ''} {
 	exec { & $source_dir\.nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
+	
 }
 
 task create_nuspec {
@@ -50,7 +52,7 @@ task create_nuspec {
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>LightBus is a lightweight in-process bus.</description>
         <copyright>Gøran Sveia Kvarv</copyright>
-        <tags>Bus Mediator Event Command Query</tags>
+        <tags>Bus Mediator Event Command Query CQRS</tags>
     </metadata>   
     <files>
         <file src=""$build_artifacts_dir\LightBus\LightBus.dll"" target=""lib\net40""/>
@@ -58,4 +60,19 @@ task create_nuspec {
 </package>" 
 
 	$nuspec | out-file $nuspec_file -encoding utf8
+}
+
+task create_common_assembly_info {
+	$date = Get-Date
+	$asmInfo = "using System.Reflection;
+
+[assembly: AssemblyVersionAttribute(""$assembly_version"")]
+[assembly: AssemblyFileVersionAttribute(""$assembly_file_version"")]
+[assembly: AssemblyCopyrightAttribute(""Copyright Gøran Sveia Kvarv 2011-" + $date.Year + """)]
+[assembly: AssemblyProductAttribute(""LightBus"")]
+[assembly: AssemblyTrademarkAttribute(""LightBus"")]
+[assembly: AssemblyCompanyAttribute("""")]
+[assembly: AssemblyConfigurationAttribute(""$build_configuration"")]" 
+
+	$asmInfo | out-file "$source_dir\CommonAssemblyInfo.cs" -encoding utf8    
 }
