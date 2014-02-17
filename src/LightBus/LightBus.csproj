@@ -52,13 +52,13 @@
     <Compile Include="HandlersExtensions.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IBus.cs" />
-    <Compile Include="IHandleRequests.cs" />
+    <Compile Include="IHandleQueries.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="IHandleMessages.cs" />
     <Compile Include="IPublishEvents.cs" />
-    <Compile Include="IRequest.cs" />
+    <Compile Include="IQuery.cs" />
     <Compile Include="ISendCommands.cs" />
-    <Compile Include="ISendRequests.cs" />
+    <Compile Include="ISendQueries.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

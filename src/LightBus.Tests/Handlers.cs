@@ -32,17 +32,17 @@ namespace LightBus.Tests
         }
     }
 
-    public class TestRequestHandler : IHandleRequests<TestRequest, TestResponse>
+    public class TestQueryHandler : IHandleQueries<TestQuery, TestResponse>
     {
-        public TestResponse Handle(TestRequest command)
+        public TestResponse Handle(TestQuery query)
         {
             return new TestResponse {IsHandled = true};
         }
     }
 
-    public class AnotherTestRequestHandler : IHandleRequests<TestRequest, TestResponse>
+    public class AnotherTestQueryHandler : IHandleQueries<TestQuery, TestResponse>
     {
-        public TestResponse Handle(TestRequest command)
+        public TestResponse Handle(TestQuery query)
         {
             return new TestResponse {IsHandled = true};
         }

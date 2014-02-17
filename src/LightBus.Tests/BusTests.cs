@@ -24,7 +24,7 @@ namespace LightBus.Tests
         public void When_sending_a_command_and_there_is_multiple_command_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.RegisterAssembly(typeof(BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleRequests<,>)));
+            serviceContainer.RegisterAssembly(typeof(BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleQueries<,>)));
             //serviceContainer.Register<IHandleMessages<TestCommand>, TestCommandHandler>();
             //serviceContainer.Register<IHandleMessages<TestCommand>, AnotherTestCommandHandler>("another");
             var bus = new Bus(serviceContainer.GetAllInstances);
@@ -57,38 +57,38 @@ namespace LightBus.Tests
         }
 
         [Fact]
-        public void When_sending_a_request_and_there_is_only_one_requeset_handler_should_invoke_request_handler()
+        public void When_sending_a_query_and_there_is_only_one_query_handler_should_invoke_query_handler()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<TestRequest, TestResponse>, TestRequestHandler>();
+            serviceContainer.Register<IHandleQueries<TestQuery, TestResponse>, TestQueryHandler>();
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var request = new TestRequest();
+            var query = new TestQuery();
 
-            var response = bus.Send(request);
+            var response = bus.Send(query);
 
             response.IsHandled.ShouldBeTrue();
         }
 
         [Fact]
-        public void When_sending_a_request_and_there_are_multiple_request_handlers_should_throw_exception()
+        public void When_sending_a_query_and_there_are_multiple_query_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<TestRequest, TestResponse>, TestRequestHandler>();
-            serviceContainer.Register<IHandleRequests<TestRequest, TestResponse>, AnotherTestRequestHandler>("another");
+            serviceContainer.Register<IHandleQueries<TestQuery, TestResponse>, TestQueryHandler>();
+            serviceContainer.Register<IHandleQueries<TestQuery, TestResponse>, AnotherTestQueryHandler>("another");
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var request = new TestRequest();
+            var query = new TestQuery();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(request));
+            Assert.Throws<NotSupportedException>(() => bus.Send(query));
         }
 
         [Fact]
-        public void When_sending_a_request_and_there_are_no_request_handlers_should_throw_exception()
+        public void When_sending_a_query_and_there_are_no_query_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var request = new TestRequest();
+            var query = new TestQuery();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(request));
+            Assert.Throws<NotSupportedException>(() => bus.Send(query));
         }
 
         [Fact]

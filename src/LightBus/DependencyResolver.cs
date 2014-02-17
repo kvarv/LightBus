@@ -20,10 +20,10 @@ namespace LightBus
             return GetAllInstancesOfType(messageType, handlerTypeFactory);
         }
 
-        public IEnumerable<object> GetAllRequestHandlers(Type requestType, Type responseType)
+        public IEnumerable<object> GetAllQueryHandlers(Type queryType, Type responseType)
         {
-            Func<Type, Type> handlerTypeFactory = t => typeof(IHandleRequests<,>).MakeGenericType(requestType, responseType);
-            return GetAllInstancesOfType(requestType, handlerTypeFactory);
+            Func<Type, Type> handlerTypeFactory = t => typeof(IHandleQueries<,>).MakeGenericType(queryType, responseType);
+            return GetAllInstancesOfType(queryType, handlerTypeFactory);
         }
 
         private IEnumerable<object> GetAllInstancesOfType(Type messageType, Func<Type, Type> handlerTypeFactory)

@@ -32,14 +32,14 @@ namespace LightBus
             handler.Handle((dynamic) message);
         }
 
-        public TResponse Send<TResponse>(IRequest<TResponse> request)
+        public TResponse Send<TResponse>(IQuery<TResponse> query)
         {
-            var requestType = request.GetType();
-            var handlers = _dependencyResolver.GetAllRequestHandlers(requestType, typeof (TResponse)).ToList();
-            handlers.CheckIfThereAreAnyFor(requestType);
-            handlers.CheckIfThereIsMoreThanOneFor(requestType);
+            var queryType = query.GetType();
+            var handlers = _dependencyResolver.GetAllQueryHandlers(queryType, typeof (TResponse)).ToList();
+            handlers.CheckIfThereAreAnyFor(queryType);
+            handlers.CheckIfThereIsMoreThanOneFor(queryType);
             dynamic handler = handlers.Single();
-            return (TResponse) handler.Handle((dynamic) request);
+            return (TResponse) handler.Handle((dynamic) query);
         }
     }
 }

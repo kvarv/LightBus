@@ -59,7 +59,7 @@
     <Compile Include="TestEvent.cs" />
     <Compile Include="Handlers.cs" />
     <Compile Include="TestCommand.cs" />
-    <Compile Include="TestRequest.cs" />
+    <Compile Include="TestQuery.cs" />
     <Compile Include="TestResponse.cs" />
   </ItemGroup>
   <ItemGroup>
