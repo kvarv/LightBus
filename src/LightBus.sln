@@ -12,6 +12,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{B3C618
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{00732855-07A5-4958-9F2C-7277450E981C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LightBus.Example.Wcf.Server", "LightBus.Example.Wcf.Server\LightBus.Example.Wcf.Server.csproj", "{BEE159A6-8F59-4682-9654-1F3EF51C86A0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,8 +46,21 @@ Global
 		{A0420760-E637-438D-A781-357151845735}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{A0420760-E637-438D-A781-357151845735}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{A0420760-E637-438D-A781-357151845735}.Release|x86.ActiveCfg = Release|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BEE159A6-8F59-4682-9654-1F3EF51C86A0} = {00732855-07A5-4958-9F2C-7277450E981C}
 	EndGlobalSection
 EndGlobal
