@@ -24,9 +24,8 @@ namespace LightBus.Tests
         public void When_sending_a_command_and_there_is_multiple_command_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.RegisterAssembly(typeof(BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleQueries<,>)));
-            //serviceContainer.Register<IHandleMessages<Command>, CommandHandler>();
-            //serviceContainer.Register<IHandleMessages<Command>, AnotherCommandHandler>("another");
+            serviceContainer.Register<IHandleMessages<Command>, CommandHandler>();
+            serviceContainer.Register<IHandleMessages<Command>, AnotherCommandHandler>("another");
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
@@ -54,6 +53,21 @@ namespace LightBus.Tests
             bus.Publish(message);
 
             message.NumberOfTimesHandled.ShouldEqual(2);
+        }
+
+        [Fact]
+        public void When_publishing_an_event_in_a_command_handler_should_handle_event()
+        {
+            var serviceContainer = new ServiceContainer();
+            var bus = new Bus(serviceContainer.GetAllInstances);
+            serviceContainer.Register<IBus>(sf => bus);
+            serviceContainer.Register<IHandleMessages<Command>, CommandHandlerThatSendsAnEvent>();
+            serviceContainer.Register<IHandleMessages<EventWithCommand>, EventWithCommandHandler>();
+            var command = new Command();
+            
+            bus.Send(command);
+
+            command.IsHandled.ShouldBeTrue();
         }
 
         [Fact]

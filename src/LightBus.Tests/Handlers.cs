@@ -16,6 +16,21 @@ namespace LightBus.Tests
         }
     }
 
+    public class CommandHandlerThatSendsAnEvent : IHandleMessages<Command>
+    {
+        private readonly IBus _bus;
+
+        public CommandHandlerThatSendsAnEvent(IBus bus)
+        {
+            _bus = bus;
+        }
+
+        public void Handle(Command command)
+        {
+            _bus.Publish(new EventWithCommand{Command = command});
+        }
+    }
+
     public class EventHandler : IHandleMessages<Event>
     {
         public void Handle(Event @event)
@@ -29,6 +44,14 @@ namespace LightBus.Tests
         public void Handle(Event @event)
         {
             @event.NumberOfTimesHandled++;
+        }
+    }
+
+    public class EventWithCommandHandler : IHandleMessages<EventWithCommand>
+    {
+        public void Handle(EventWithCommand @event)
+        {
+            @event.Command.IsHandled = true;
         }
     }
 
