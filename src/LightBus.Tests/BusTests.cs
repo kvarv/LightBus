@@ -11,9 +11,9 @@ namespace LightBus.Tests
         public void When_sending_a_command_and_there_is_only_one_command_handler_should_invoke_command_handler()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleMessages<TestCommand>, TestCommandHandler>();
+            serviceContainer.Register<IHandleMessages<Command>, CommandHandler>();
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var command = new TestCommand();
+            var command = new Command();
 
             bus.Send(command);
 
@@ -25,10 +25,10 @@ namespace LightBus.Tests
         {
             var serviceContainer = new ServiceContainer();
             serviceContainer.RegisterAssembly(typeof(BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleQueries<,>)));
-            //serviceContainer.Register<IHandleMessages<TestCommand>, TestCommandHandler>();
-            //serviceContainer.Register<IHandleMessages<TestCommand>, AnotherTestCommandHandler>("another");
+            //serviceContainer.Register<IHandleMessages<Command>, CommandHandler>();
+            //serviceContainer.Register<IHandleMessages<Command>, AnotherCommandHandler>("another");
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var command = new TestCommand();
+            var command = new Command();
 
             Assert.Throws<NotSupportedException>(() => bus.Send(command));
         }
@@ -38,7 +38,7 @@ namespace LightBus.Tests
         {
             var serviceContainer = new ServiceContainer();
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var command = new TestCommand();
+            var command = new Command();
 
             Assert.Throws<NotSupportedException>(() => bus.Send(command));
         }
@@ -49,7 +49,7 @@ namespace LightBus.Tests
             var serviceContainer = new ServiceContainer();
             serviceContainer.RegisterAssembly(typeof (BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof (IHandleMessages<>));
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var message = new TestEvent();
+            var message = new Event();
 
             bus.Publish(message);
 
@@ -60,9 +60,9 @@ namespace LightBus.Tests
         public void When_sending_a_query_and_there_is_only_one_query_handler_should_invoke_query_handler()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleQueries<TestQuery, TestResponse>, TestQueryHandler>();
+            serviceContainer.Register<IHandleQueries<Query, Response>, QueryHandler>();
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var query = new TestQuery();
+            var query = new Query();
 
             var response = bus.Send(query);
 
@@ -73,10 +73,10 @@ namespace LightBus.Tests
         public void When_sending_a_query_and_there_are_multiple_query_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleQueries<TestQuery, TestResponse>, TestQueryHandler>();
-            serviceContainer.Register<IHandleQueries<TestQuery, TestResponse>, AnotherTestQueryHandler>("another");
+            serviceContainer.Register<IHandleQueries<Query, Response>, QueryHandler>();
+            serviceContainer.Register<IHandleQueries<Query, Response>, AnotherQueryHandler>("another");
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var query = new TestQuery();
+            var query = new Query();
 
             Assert.Throws<NotSupportedException>(() => bus.Send(query));
         }
@@ -86,7 +86,7 @@ namespace LightBus.Tests
         {
             var serviceContainer = new ServiceContainer();
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var query = new TestQuery();
+            var query = new Query();
 
             Assert.Throws<NotSupportedException>(() => bus.Send(query));
         }
@@ -97,7 +97,7 @@ namespace LightBus.Tests
             var serviceContainer = new ServiceContainer();
             serviceContainer.RegisterAssembly(typeof (BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof (IHandleMessages<>));
             var bus = new Bus(serviceContainer.GetAllInstances);
-            var message = new TestEvent();
+            var message = new Event();
 
             Assert.DoesNotThrow(() =>
                 {

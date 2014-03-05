@@ -1,50 +1,50 @@
 namespace LightBus.Tests
 {
-    public class TestCommandHandler : IHandleMessages<TestCommand>
+    public class CommandHandler : IHandleMessages<Command>
     {
-        public void Handle(TestCommand command)
+        public void Handle(Command command)
         {
             command.IsHandled = true;
         }
     }
 
-    public class AnotherTestCommandHandler : IHandleMessages<TestCommand>
+    public class AnotherCommandHandler : IHandleMessages<Command>
     {
-        public void Handle(TestCommand command)
+        public void Handle(Command command)
         {
             command.IsHandled = true;
         }
     }
 
-    public class TestEventHandler : IHandleMessages<TestEvent>
+    public class EventHandler : IHandleMessages<Event>
     {
-        public void Handle(TestEvent @event)
+        public void Handle(Event @event)
         {
             @event.NumberOfTimesHandled++;
         }
     }
 
-    public class TestEventHandler2 : IHandleMessages<TestEvent>
+    public class AnotherEventHandler : IHandleMessages<Event>
     {
-        public void Handle(TestEvent @event)
+        public void Handle(Event @event)
         {
             @event.NumberOfTimesHandled++;
         }
     }
 
-    public class TestQueryHandler : IHandleQueries<TestQuery, TestResponse>
+    public class QueryHandler : IHandleQueries<Query, Response>
     {
-        public TestResponse Handle(TestQuery query)
+        public Response Handle(Query query)
         {
-            return new TestResponse {IsHandled = true};
+            return new Response {IsHandled = true};
         }
     }
 
-    public class AnotherTestQueryHandler : IHandleQueries<TestQuery, TestResponse>
+    public class AnotherQueryHandler : IHandleQueries<Query, Response>
     {
-        public TestResponse Handle(TestQuery query)
+        public Response Handle(Query query)
         {
-            return new TestResponse {IsHandled = true};
+            return new Response {IsHandled = true};
         }
     }
 }

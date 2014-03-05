@@ -12,7 +12,7 @@ namespace LightBus
         {
             _dependencyResolver = new DependencyResolver(getAllInstancesOfType);
         }
-
+            
         public void Publish(IEvent message)
         {
             var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());

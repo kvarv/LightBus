@@ -14,19 +14,28 @@ namespace LightBus.Example.Wcf.Server
             if (serviceType == null)
                 throw new ArgumentNullException("serviceType");
 
-            var attribute = serviceType.GetCustomAttributes(typeof(ServiceContractAttribute), true)
+            var attribute = serviceType.GetCustomAttributes(typeof (ServiceContractAttribute), true)
                                        .Cast<ServiceContractAttribute>()
                                        .FirstOrDefault();
 
             if (!serviceType.IsInterface || attribute == null)
                 throw new NotSupportedException("Only interfaces with [ServiceContract] attribute are supported with LightInjectServiceHostFactory.");
 
-            var container = new ServiceContainer();
+            if (LightInject.ServiceContainer == null)
+                throw new ArgumentNullException("Wcf is not enabled on the ServiceContainer.");
+
+            var container = LightInject.ServiceContainer;
             var proxyBuilder = new ProxyBuilder();
             var proxyDefinition = new ProxyDefinition(serviceType, () => container.GetInstance(serviceType));
             var proxyType = proxyBuilder.GetProxyType(proxyDefinition);
 
             return base.CreateServiceHost(proxyType, baseAddresses);
+        }
+
+        public ServiceHost CreateServiceHost<TService>(params string[] baseAddresses)
+        {
+            var uriBaseAddresses = baseAddresses.Select(s => new Uri(s)).ToArray();
+            return CreateServiceHost(typeof (TService), uriBaseAddresses);
         }
 
         public override ServiceHostBase CreateServiceHost(string constructorString, Uri[] baseAddresses)
@@ -36,6 +45,19 @@ namespace LightBus.Example.Wcf.Server
                 throw new ArgumentException("Could not get Type for {0}", constructorString);
 
             return CreateServiceHost(type, baseAddresses);
+        }
+    }
+
+    public static class LightInject
+    {
+        public static ServiceContainer ServiceContainer { get; set; }
+    }
+
+    public static class ServiceContainerExtension
+    {
+        public static void EnableWcf(this ServiceContainer serviceContainer)
+        {
+            LightInject.ServiceContainer = serviceContainer;
         }
     }
 }
