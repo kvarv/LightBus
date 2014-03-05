@@ -2,7 +2,9 @@
 
 **LightBus** is a lightweight in-process bus, which pretty much makes it an implementation of the mediator pattern. It is insipired by [NServiceBus](http://www.particular.net/).
 
-Typical use case is server side behind a service interface like WCF, ASP.NET Web Api, Nancy, ServiceStack etc. This is not an Event Aggregator.
+Typical use case is server side behind a service interface like ASP.NET Web Api, ASP.NET MVC, Nancy, ServiceStack, WCF etc. 
+
+Handlers are created every time a message is sent. Because of this, **LightBus** is not useful as an Event Aggregator.
 
 ##Define a command
 ```csharp
