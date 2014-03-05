@@ -1,6 +1,8 @@
 #LightBus
 
-**LightBus** is a lightweight in-process bus, which pretty much makes it an implementation of the mediator pattern.
+**LightBus** is a lightweight in-process bus, which pretty much makes it an implementation of the mediator pattern. It is insipired by [NServiceBus](http://www.particular.net/).
+
+Typical use case is server side behind a service interface like WCF, ASP.NET Web Api, Nancy, ServiceStack etc. This is not an Event Aggregator.
 
 ##Define a command
 ```csharp
