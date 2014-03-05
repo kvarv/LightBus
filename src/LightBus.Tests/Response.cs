@@ -1,6 +1,6 @@
 ﻿namespace LightBus.Tests
 {
-    public class TestResponse
+    public class Response
     {
         public bool IsHandled { get; set; }
     }
