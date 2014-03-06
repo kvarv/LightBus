@@ -4,7 +4,7 @@
 
 Typical use case is directly behind your service boundary, for example server side behind a service interface like ASP.NET Web Api, ASP.NET MVC, Nancy, ServiceStack, WCF etc. 
 
-##Setup an IoC container
+##Set up an IoC container
 ###[LightInject](http://www.lightinject.net/) setup
 ```csharp
 //Register all types that implements IHandleMessages and IHandleQueries
