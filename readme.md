@@ -1,6 +1,6 @@
 #LightBus
 
-**LightBus** is a lightweight in-process bus, which pretty much makes it an implementation of the mediator pattern. **LightBus**, insipired by [NServiceBus](http://www.particular.net/) and CQRS, allows you to send messages (commands, events, queries) to registered recipients in a decoupled manner. This allows you to encapsulate business logic in a message handler which are registered and created by an IoC container. Handlers are created every time a message is sent. Because of this, **LightBus** is not useful as an Event Aggregator.
+**LightBus** is a lightweight in-process bus, which pretty much makes it an implementation of the mediator pattern. **LightBus**, insipired by [NServiceBus](http://www.particular.net/) and CQRS, allows you to send messages (commands, events, queries) to registered recipients in a decoupled manner. This allows you to encapsulate business operations in a message handler which are registered and created by an IoC container. Handlers are created every time a message is sent. Because of this, **LightBus** is not useful as an Event Aggregator.
 
 Typical use case is directly behind your service boundary, for example server side behind a service interface like ASP.NET Web Api, ASP.NET MVC, Nancy, ServiceStack, WCF etc. 
 
