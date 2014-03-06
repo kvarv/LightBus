@@ -82,6 +82,43 @@ public class CustomerCreatedHandler : IHandleMessages<CustomerCreatedEvent>
 }
 ```
 
+##Define a query
+```csharp
+public class GetAllCustomersQuery : IQuery<GetAllCustomersResponse>
+{
+}
+```
+
+##Define a query response
+```csharp
+public class GetAllCustomersResponse
+{
+    public List<Customer> Cutomers { get; set; }
+}
+```
+
+##Send a query
+```csharp
+public GetAllCustomersResponse Send(GetAllCustomersQuery query)
+{
+    return _bus.Send(query);
+}
+```
+
+##Handle a query
+```csharp
+public class GetAllCustomersHandler : IHandleQueries<GetAllCustomersQuery, GetAllCustomersResponse>
+{
+    public GetAllCustomersResponse Handle(GetAllCustomersQuery query)
+    {
+        return new GetAllCustomersResponse
+        {
+            Cutomers = //complex query
+        };
+    }
+}
+```
+
 ##Set up an IoC container
 ###[LightInject](http://www.lightinject.net/) setup
 ```csharp
