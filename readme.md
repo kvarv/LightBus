@@ -7,6 +7,7 @@ Typical use case is directly behind your service boundary, for example server si
 ##Set up an IoC container
 ###[LightInject](http://www.lightinject.net/) setup
 ```csharp
+var serviceContainer = new ServiceContainer();
 //Register all types that implements IHandleMessages and IHandleQueries
 serviceContainer.RegisterAssembly(Assembly.GetExecutingAssembly(), (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleQueries<,>)));
 
