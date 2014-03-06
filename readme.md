@@ -4,17 +4,6 @@
 
 Typical use case is directly behind your service boundary, for example server side behind a service interface like ASP.NET Web Api, ASP.NET MVC, Nancy, ServiceStack, WCF etc. 
 
-##Set up an IoC container
-###[LightInject](http://www.lightinject.net/) setup
-```csharp
-var serviceContainer = new ServiceContainer();
-//Register all types that implements IHandleMessages and IHandleQueries
-serviceContainer.RegisterAssembly(Assembly.GetExecutingAssembly(), (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleQueries<,>)));
-
-//Register the Bus
-serviceContainer.Register<IBus>(sf => new Bus(sf.GetAllInstances), new PerContainerLifetime());
-```
-
 ##Define a command
 ```csharp
 public class CreateCustomerCommand : ICommand
@@ -88,4 +77,15 @@ public class CustomerCreatedHandler : IHandleMessages<CustomerCreatedEvent>
         Console.WriteLine("Customer with id {0} created.", command.CustomerId);            
     }
 }
+```
+
+##Set up an IoC container
+###[LightInject](http://www.lightinject.net/) setup
+```csharp
+var serviceContainer = new ServiceContainer();
+//Register all types that implements IHandleMessages and IHandleQueries
+serviceContainer.RegisterAssembly(Assembly.GetExecutingAssembly(), (serviceType, implementingType) => serviceType.IsGenericType && (serviceType.GetGenericTypeDefinition() == typeof(IHandleMessages<>) || serviceType.GetGenericTypeDefinition() == typeof(IHandleQueries<,>)));
+
+//Register the Bus
+serviceContainer.Register<IBus>(sf => new Bus(sf.GetAllInstances), new PerContainerLifetime());
 ```
