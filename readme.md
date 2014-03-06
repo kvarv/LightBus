@@ -4,6 +4,9 @@
 
 Typical use case is directly behind your service boundary, for example server side behind a service interface like ASP.NET Web Api, ASP.NET MVC, Nancy, ServiceStack, WCF etc. 
 
+##Installation
+```PM> Install-Package LightBus```
+
 ##Define a command
 ```csharp
 public class CreateCustomerCommand : ICommand
