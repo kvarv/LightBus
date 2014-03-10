@@ -8,7 +8,7 @@ properties {
 	$build_artifacts_dir = "$base_dir\build_artifacts"
 	$tools_dir = "$base_dir\tools"
 	$test_dir = "$build_artifacts_dir\tests"
-	$global:build_configuration = "Debug"
+	$global:build_configuration = "debug"
 	$nuspec_file = "$build_artifacts_dir\LightBus.nuspec"
 	$assembly_version = if($version) { $version } else { "0.0.0" }
 	$assembly_file_version = $assembly_version
@@ -17,7 +17,7 @@ properties {
 task default -depends compile, test, reset_assembly_info
 
 task mark_release {
-    $global:build_configuration = "Release"
+    $global:build_configuration = "release"
 }
 
 task clean {
@@ -30,8 +30,8 @@ task compile -depends clean, create_common_assembly_info {
 }
 
 task test {	
-	$testassemblies = get-childitem $test_dir -recurse -include *tests*.dll
-	exec { & $tools_dir\xunit\xunit.console.clr4.exe $testassemblies /xml $test_dir\tests_results.xml }
+    exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net45\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
+    exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net40\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
 }
 
 task create_package -depends mark_release, compile, test, create_nuspec, reset_assembly_info -precondition { return $version -ne ''} {
@@ -55,10 +55,11 @@ task create_nuspec {
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>LightBus is a lightweight in-process bus.</description>
         <copyright>Gøran Sveia Kvarv</copyright>
-        <tags>Bus Mediator Event Command Query CQRS</tags>
+        <tags>bus mediator event command query cqrs</tags>
     </metadata>   
     <files>
-        <file src=""$build_artifacts_dir\LightBus\LightBus.dll"" target=""lib\net40""/>
+        <file src=""$build_artifacts_dir\LightBus\net45\$build_configuration\LightBus.dll"" target=""lib\net45""/>
+        <file src=""$build_artifacts_dir\LightBus\net40\$build_configuration\LightBus.dll"" target=""lib\net40""/>
     </files>
 </package>" 
 
@@ -66,6 +67,7 @@ task create_nuspec {
 }
 
 task create_common_assembly_info {
+    $commit = git log -1 --pretty=format:%H
 	$date = Get-Date
 	$asmInfo = "using System.Reflection;
 
@@ -75,7 +77,8 @@ task create_common_assembly_info {
 [assembly: AssemblyProductAttribute(""LightBus"")]
 [assembly: AssemblyTrademarkAttribute(""LightBus"")]
 [assembly: AssemblyCompanyAttribute("""")]
-[assembly: AssemblyConfigurationAttribute(""$build_configuration"")]" 
+[assembly: AssemblyConfigurationAttribute(""$build_configuration"")]
+[assembly: AssemblyInformationalVersionAttribute(""$commit"")]"
 
 	$asmInfo | out-file "$source_dir\CommonAssemblyInfo.cs" -encoding utf8    
 }
