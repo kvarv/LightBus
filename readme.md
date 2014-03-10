@@ -129,3 +129,6 @@ serviceContainer.RegisterAssembly(Assembly.GetExecutingAssembly(), (serviceType,
 //Register the Bus
 serviceContainer.Register<IBus>(sf => new Bus(sf.GetAllInstances), new PerContainerLifetime());
 ```
+
+##Examples
+See the [LightBus.Examples](https://github.com/kvarv/LightBus.Examples) repository
