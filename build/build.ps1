@@ -8,7 +8,7 @@ properties {
 	$build_artifacts_dir = "$base_dir\build_artifacts"
 	$tools_dir = "$base_dir\tools"
 	$test_dir = "$build_artifacts_dir\tests"
-	$global:build_configuration = "Debug"
+	$global:build_configuration = "debug"
 	$nuspec_file = "$build_artifacts_dir\LightBus.nuspec"
 	$assembly_version = if($version) { $version } else { "0.0.0" }
 	$assembly_file_version = $assembly_version
@@ -17,7 +17,7 @@ properties {
 task default -depends compile, test, reset_assembly_info
 
 task mark_release {
-    $global:build_configuration = "Release"
+    $global:build_configuration = "release"
 }
 
 task clean {
@@ -58,7 +58,7 @@ task create_nuspec {
         <tags>Bus Mediator Event Command Query CQRS</tags>
     </metadata>   
     <files>
-        <file src=""$build_artifacts_dir\LightBus\LightBus.dll"" target=""lib\net40""/>
+        <file src=""$build_artifacts_dir\LightBus\net45\$build_configuration\LightBus.dll"" target=""lib\net45""/>
     </files>
 </package>" 
 
