@@ -26,6 +26,7 @@ task clean {
 }
 
 task compile -depends clean, create_common_assembly_info {
+    exec { & $tools_dir\nuget\nuget.exe restore $source_dir\LightBus.sln }
 	exec { msbuild  $source_dir\LightBus.sln /t:Clean /t:Build /p:Configuration=$build_configuration /v:q /nologo }
 }
 
