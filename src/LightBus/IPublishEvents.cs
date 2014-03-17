@@ -1,7 +1,9 @@
-﻿namespace LightBus
+﻿using System.Threading.Tasks;
+
+namespace LightBus
 {
     public interface IPublishEvents
     {
-        void Publish(IEvent @event);
+        System.Threading.Tasks.Task PublishAsync(IEvent @event);
     }
 }

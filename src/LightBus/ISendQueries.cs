@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace LightBus
 {
     public interface ISendQueries
     {
-        TResponse Send<TResponse>(IQuery<TResponse> query);
+        Task<TResponse> SendAsync<TResponse>(IQuery<TResponse> query);
     }
 }

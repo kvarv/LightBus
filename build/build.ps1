@@ -31,7 +31,6 @@ task compile -depends clean, create_common_assembly_info {
 }
 
 task test {	
-    exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net45\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
     exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net40\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
 }
 

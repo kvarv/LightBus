@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace LightBus
 {
-    public interface IHandleQueries<in TQuery, out TResponse> where TQuery : IQuery<TResponse>
+    public interface IHandleQueries<in TQuery, TResponse> where TQuery : IQuery<TResponse>
     {
-        TResponse Handle(TQuery query);
+        Task<TResponse> HandleAsync(TQuery query);
     }
 }

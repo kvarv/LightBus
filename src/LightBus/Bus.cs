@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace LightBus
 {
@@ -13,33 +14,38 @@ namespace LightBus
             _dependencyResolver = new DependencyResolver(getAllInstancesOfType);
         }
             
-        public void Publish(IEvent message)
+        public System.Threading.Tasks.Task PublishAsync(IEvent message)
         {
             var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());
-            foreach (dynamic handler in handlers)
-            {
-                handler.Handle((dynamic) message);
-            }
+            var results = handlers.Cast<dynamic>().Select(handler => handler.HandleAsync((dynamic) message));
+            System.Threading.Tasks.Task[] tasks = results.Select(task => (System.Threading.Tasks.Task) task).ToArray();
+            var whenAll = System.Threading.Tasks.Task.Factory.ContinueWhenAll(tasks, completedTasks => completedTasks);
+            //Since all async exceptions must be observed in 4.0
+            return whenAll.ContinueWith(tsks => tsks.Result.Select(x => x.Exception) );
         }
 
-        public void Send(ICommand message)
+        public System.Threading.Tasks.Task SendAsync(ICommand message)
         {
             var commandType = message.GetType();
             var handlers = _dependencyResolver.GetAllMessageHandlers(commandType).ToList();
             handlers.CheckIfThereAreAnyFor(commandType);
             handlers.CheckIfThereIsMoreThanOneFor(commandType);
             dynamic handler = handlers.Single();
-            handler.Handle((dynamic) message);
+            System.Threading.Tasks.Task task = handler.HandleAsync((dynamic)message);
+            //Since all async exceptions must be observed in 4.0
+            return task.ContinueWith(tsk => tsk.Exception);
         }
 
-        public TResponse Send<TResponse>(IQuery<TResponse> query)
+        public Task<TResponse> SendAsync<TResponse>(IQuery<TResponse> query)
         {
             var queryType = query.GetType();
             var handlers = _dependencyResolver.GetAllQueryHandlers(queryType, typeof (TResponse)).ToList();
             handlers.CheckIfThereAreAnyFor(queryType);
             handlers.CheckIfThereIsMoreThanOneFor(queryType);
             dynamic handler = handlers.Single();
-            return (TResponse) handler.Handle((dynamic) query);
+            Task<TResponse> task = handler.HandleAsync((dynamic)query);
+            //Since all async operations must be observed in 4.0
+            return task.ContinueWith(tsk => tsk.Result);
         }
     }
 }

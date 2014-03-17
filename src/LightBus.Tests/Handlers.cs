@@ -1,18 +1,23 @@
+using System;
+using System.Threading.Tasks;
+
 namespace LightBus.Tests
 {
     public class CommandHandler : IHandleMessages<Command>
     {
-        public void Handle(Command command)
+        public System.Threading.Tasks.Task HandleAsync(Command command)
         {
             command.IsHandled = true;
+            return Task.FromResult();
         }
     }
 
     public class AnotherCommandHandler : IHandleMessages<Command>
     {
-        public void Handle(Command command)
+        public System.Threading.Tasks.Task HandleAsync(Command command)
         {
             command.IsHandled = true;
+            return Task.FromResult();
         }
     }
 
@@ -25,49 +30,60 @@ namespace LightBus.Tests
             _bus = bus;
         }
 
-        public void Handle(Command command)
+        public System.Threading.Tasks.Task HandleAsync(Command command)
         {
-            _bus.Publish(new EventWithCommand{Command = command});
+            return _bus.PublishAsync(new EventWithCommand{Command = command});
+        }
+    }
+
+    public class AsyncCommandHandler : IHandleMessages<AsyncCommand>
+    {
+        public System.Threading.Tasks.Task HandleAsync(AsyncCommand command)
+        {            
+            return Task.Delay(50).ContinueWith(task => command.IsHandled = true);
         }
     }
 
     public class EventHandler : IHandleMessages<Event>
     {
-        public void Handle(Event @event)
+        public System.Threading.Tasks.Task HandleAsync(Event @event)
         {
             @event.NumberOfTimesHandled++;
+            return Task.FromResult();
         }
     }
 
     public class AnotherEventHandler : IHandleMessages<Event>
     {
-        public void Handle(Event @event)
+        public System.Threading.Tasks.Task HandleAsync(Event @event)
         {
             @event.NumberOfTimesHandled++;
+            return Task.FromResult();
         }
     }
 
     public class EventWithCommandHandler : IHandleMessages<EventWithCommand>
     {
-        public void Handle(EventWithCommand @event)
+        public System.Threading.Tasks.Task HandleAsync(EventWithCommand @event)
         {
             @event.Command.IsHandled = true;
+            return Task.FromResult();
         }
     }
 
     public class QueryHandler : IHandleQueries<Query, Response>
     {
-        public Response Handle(Query query)
+        public Task<Response> HandleAsync(Query query)
         {
-            return new Response {IsHandled = true};
+            return Task.FromResult(new Response { IsHandled = true });
         }
     }
 
     public class AnotherQueryHandler : IHandleQueries<Query, Response>
     {
-        public Response Handle(Query query)
+        public Task<Response> HandleAsync(Query query)
         {
-            return new Response {IsHandled = true};
+            return Task.FromResult(new Response { IsHandled = true });
         }
     }
 }

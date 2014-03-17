@@ -1,7 +1,9 @@
+using System.Threading.Tasks;
+
 namespace LightBus
 {
     public interface IHandleMessages<in TMessage> where TMessage : IMessage
     {
-        void Handle(TMessage message);
+        System.Threading.Tasks.Task HandleAsync(TMessage message);
     }
 }

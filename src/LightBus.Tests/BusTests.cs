@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using LightBus.Tests.LightInject;
 using Should;
 using Xunit;
@@ -15,7 +16,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            bus.Send(command);
+            bus.SendAsync(command);
 
             command.IsHandled.ShouldBeTrue();
         }
@@ -29,7 +30,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(command));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command));
         }
 
         [Fact]
@@ -39,7 +40,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(command));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command));
         }
 
         [Fact]
@@ -50,7 +51,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var message = new Event();
 
-            bus.Publish(message);
+            bus.PublishAsync(message);
 
             message.NumberOfTimesHandled.ShouldEqual(2);
         }
@@ -65,7 +66,24 @@ namespace LightBus.Tests
             serviceContainer.Register<IHandleMessages<EventWithCommand>, EventWithCommandHandler>();
             var command = new Command();
             
-            bus.Send(command);
+            bus.SendAsync(command);
+
+            command.IsHandled.ShouldBeTrue();
+        }
+
+        [Fact]
+        public void When_sending_async_should_invoke_command_handler_and_be_able_to_wait_for_async_result()
+        {
+            var serviceContainer = new ServiceContainer();
+            var bus = new Bus(serviceContainer.GetAllInstances);
+            serviceContainer.Register<IBus>(sf => bus);
+            serviceContainer.Register<IHandleMessages<AsyncCommand>, AsyncCommandHandler>();
+            var command = new AsyncCommand();
+            var autoResetEvent = new AutoResetEvent(false);
+            
+            var task = bus.SendAsync(command);
+            task.ContinueWith(tsk => autoResetEvent.Set());
+            autoResetEvent.WaitOne();
 
             command.IsHandled.ShouldBeTrue();
         }
@@ -78,9 +96,9 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            var response = bus.Send(query);
+            var response = bus.SendAsync(query);
 
-            response.IsHandled.ShouldBeTrue();
+            response.Result.IsHandled.ShouldBeTrue();
         }
 
         [Fact]
@@ -92,7 +110,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(query));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query));
         }
 
         [Fact]
@@ -102,7 +120,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(query));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query));
         }
 
         [Fact]
@@ -115,9 +133,9 @@ namespace LightBus.Tests
 
             Assert.DoesNotThrow(() =>
                 {
-                    bus.Publish(message);
-                    bus.Publish(message);
-                    bus.Publish(message);
+                    bus.PublishAsync(message);
+                    bus.PublishAsync(message);
+                    bus.PublishAsync(message);
                 });
         }
     }
