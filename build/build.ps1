@@ -35,7 +35,7 @@ task test {
 }
 
 task create_package -depends mark_release, compile, test, create_nuspec, reset_assembly_info -precondition { return $version -ne ''} {
-	exec { & $source_dir\.nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
+	exec { & $tools_dir\nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
 }
 
 task reset_assembly_info {
@@ -58,7 +58,6 @@ task create_nuspec {
         <tags>bus mediator event command query cqrs</tags>
     </metadata>   
     <files>
-        <file src=""$build_artifacts_dir\LightBus\net45\$build_configuration\LightBus.dll"" target=""lib\net45""/>
         <file src=""$build_artifacts_dir\LightBus\net40\$build_configuration\LightBus.dll"" target=""lib\net40""/>
     </files>
 </package>" 
