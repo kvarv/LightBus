@@ -1,9 +1,9 @@
 ﻿using System.Reflection;
 
-[assembly: AssemblyVersionAttribute("0.0.0")]
-[assembly: AssemblyFileVersionAttribute("0.0.0")]
-[assembly: AssemblyCopyrightAttribute("Copyright Gøran Sveia Kvarv 2011-2014")]
-[assembly: AssemblyProductAttribute("LightBus")]
-[assembly: AssemblyTrademarkAttribute("LightBus")]
-[assembly: AssemblyCompanyAttribute("")]
-[assembly: AssemblyConfigurationAttribute("Debug")]
+[assembly: AssemblyVersion("0.0.0")]
+[assembly: AssemblyFileVersion("0.0.0")]
+[assembly: AssemblyCopyright("Copyright Gøran Sveia Kvarv 2011-2014")]
+[assembly: AssemblyProduct("LightBus")]
+[assembly: AssemblyTrademark("LightBus")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyConfiguration("Debug")]

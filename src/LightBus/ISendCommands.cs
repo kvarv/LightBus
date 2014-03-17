@@ -4,6 +4,6 @@ namespace LightBus
 {
     public interface ISendCommands
     {
-        System.Threading.Tasks.Task SendAsync(ICommand message);
+        Task SendAsync(ICommand message);
     }
 }

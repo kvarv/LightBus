@@ -65,7 +65,7 @@ namespace LightBus.Tests
             serviceContainer.Register<IHandleMessages<Command>, CommandHandlerThatSendsAnEvent>();
             serviceContainer.Register<IHandleMessages<EventWithCommand>, EventWithCommandHandler>();
             var command = new Command();
-            
+
             bus.SendAsync(command);
 
             command.IsHandled.ShouldBeTrue();
@@ -80,7 +80,7 @@ namespace LightBus.Tests
             serviceContainer.Register<IHandleMessages<AsyncCommand>, AsyncCommandHandler>();
             var command = new AsyncCommand();
             var autoResetEvent = new AutoResetEvent(false);
-            
+
             var task = bus.SendAsync(command);
             task.ContinueWith(tsk => autoResetEvent.Set());
             autoResetEvent.WaitOne();
@@ -132,11 +132,11 @@ namespace LightBus.Tests
             var message = new Event();
 
             Assert.DoesNotThrow(() =>
-                {
-                    bus.PublishAsync(message);
-                    bus.PublishAsync(message);
-                    bus.PublishAsync(message);
-                });
+            {
+                bus.PublishAsync(message);
+                bus.PublishAsync(message);
+                bus.PublishAsync(message);
+            });
         }
     }
 }

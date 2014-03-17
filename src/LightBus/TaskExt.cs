@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace LightBus
 {
-    public static class Task
+    public static class TaskExt
     {
-        private static readonly Lazy<System.Threading.Tasks.Task> CompletedTask = new Lazy<System.Threading.Tasks.Task>(() => FromResult<object>(null));
+        private static readonly Lazy<Task> CompletedTask = new Lazy<Task>(() => FromResult<object>(null));
 
-        public static System.Threading.Tasks.Task FromResult()
+        public static Task FromResult()
         {
             return CompletedTask.Value;
         }
@@ -19,10 +20,10 @@ namespace LightBus
             return tcs.Task;
         }
 
-        public static System.Threading.Tasks.Task Delay(double milliseconds)
+        public static Task Delay(double milliseconds)
         {
             var tcs = new TaskCompletionSource<bool>();
-            var timer = new System.Timers.Timer();
+            var timer = new Timer();
             timer.Elapsed += (obj, args) => tcs.TrySetResult(true);
             timer.Interval = milliseconds;
             timer.AutoReset = false;
