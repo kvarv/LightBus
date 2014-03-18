@@ -19,9 +19,13 @@ namespace LightBus
             var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());
             var results = handlers.Cast<dynamic>().Select(handler => handler.HandleAsync((dynamic) message));
             var tasks = results.Select(task => (Task) task).ToArray();
-            var whenAll = Task.Factory.ContinueWhenAll(tasks, completedTasks => completedTasks);
-            //Since all async exceptions must be observed in 4.0
-            return whenAll.ContinueWith(tsks => tsks.Result.Select(x => x.Exception));
+            return Task.Factory.ContinueWhenAll(tasks, completedTasks =>
+            {
+                var exceptions = completedTasks.Where(task => task.Exception != null).Select(task => task.Exception);
+                if (exceptions.Any())
+                    throw new AggregateException(exceptions);
+                return completedTasks;
+            });
         }
 
         public Task SendAsync(ICommand message)
@@ -31,9 +35,7 @@ namespace LightBus
             handlers.CheckIfThereAreAnyFor(commandType);
             handlers.CheckIfThereIsMoreThanOneFor(commandType);
             dynamic handler = handlers.Single();
-            Task task = handler.HandleAsync((dynamic) message);
-            //Since all async exceptions must be observed in 4.0
-            return task.ContinueWith(tsk => tsk.Exception);
+            return handler.HandleAsync((dynamic) message);
         }
 
         public Task<TResponse> SendAsync<TResponse>(IQuery<TResponse> query)
@@ -43,9 +45,7 @@ namespace LightBus
             handlers.CheckIfThereAreAnyFor(queryType);
             handlers.CheckIfThereIsMoreThanOneFor(queryType);
             dynamic handler = handlers.Single();
-            Task<TResponse> task = handler.HandleAsync((dynamic) query);
-            //Since all async operations must be observed in 4.0
-            return task.ContinueWith(tsk => tsk.Result);
+            return handler.HandleAsync((dynamic) query);
         }
     }
 }

@@ -72,7 +72,7 @@ namespace LightBus.Tests
         }
 
         [Fact]
-        public void When_sending_async_should_invoke_command_handler_and_be_able_to_wait_for_async_result()
+        public void When_sending_a_command_should_invoke_command_handler_and_be_able_to_wait_for_async_result()
         {
             var serviceContainer = new ServiceContainer();
             var bus = new Bus(serviceContainer.GetAllInstances);
