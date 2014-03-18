@@ -126,7 +126,7 @@ namespace LightBus.Tests
         {
             var serviceContainer = new ServiceContainer();
             serviceContainer.RegisterAssembly(typeof (BusTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof (IHandleMessages<>));
-            var bus = new Bus(serviceContainer.GetAllInstances);
+            IBus bus = new Bus(serviceContainer.GetAllInstances);
             var message = new Event();
 
             Assert.DoesNotThrow(() =>
