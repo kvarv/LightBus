@@ -4,6 +4,8 @@
 
 Typical use case is directly behind your service boundary, for example server side behind a service interface like ASP.NET Web Api, ASP.NET MVC, Nancy, ServiceStack, WCF etc. 
 
+**LightBus** is all async and uses the Task Parallell Library which means that you could use async/await on .NET 4.5. Still, **LightBus** targets .NET 4.0
+
 ##Installation
 ```PM> Install-Package LightBus```
 
@@ -26,9 +28,9 @@ public class CustomerService : ICustomerService
         _bus = bus;
     }
 
-    public void Send(CreateCustomerCommand command)
+    public async Task SendCommand(CreateCustomerCommand command)
     {
-        _bus.Send(command);
+        await _bus.SendAsync(command);
     }
 }
 ```
@@ -37,8 +39,9 @@ public class CustomerService : ICustomerService
 ```csharp
 public class CreateCustomerHandler : IHandleMessages<CreateCustomerCommand>
 {
-    public void Handle(CreateCustomerCommand command)
+    public async Task HandleAsync(CreateCustomerCommand command)
     {
+        await Task.Delay(100);
         Console.WriteLine("Creating customer {0}.", command.Name);
     }
 }
@@ -63,10 +66,10 @@ public class CreateCustomerHandler : IHandleMessages<CreateCustomerCommand>
         _bus = bus;
     }
 
-    public void Handle(CreateCustomerCommand command)
+    public async Task HandleAsync(CreateCustomerCommand command)
     {
         Console.WriteLine("Creating customer {0}.", command.Name);
-        _bus.Publish(new CustomerCreatedEvent { CustomerId = Guid.NewGuid() });
+        await _bus.PublishAsync(new CustomerCreatedEvent { CustomerId = Guid.NewGuid() });
     }
 }
 ```
@@ -75,9 +78,10 @@ public class CreateCustomerHandler : IHandleMessages<CreateCustomerCommand>
 ```csharp
 public class CustomerCreatedHandler : IHandleMessages<CustomerCreatedEvent>
 {
-    public void Handle(CustomerCreatedEvent command)
+    public async Task HandleAsync(CustomerCreatedEvent command)
     {
-        Console.WriteLine("Customer with id {0} created.", command.CustomerId);            
+        await Task.Delay(50);
+        Console.WriteLine("Customer with id {0} created.", command.CustomerId);
     }
 }
 ```
@@ -99,9 +103,9 @@ public class GetAllCustomersResponse
 
 ##Send a query
 ```csharp
-public GetAllCustomersResponse Send(GetAllCustomersQuery query)
+public async Task<GetAllCustomersResponse> SendQuery(GetAllCustomersQuery query)
 {
-    return _bus.Send(query);
+    return await _bus.SendAsync(query);
 }
 ```
 
@@ -109,11 +113,12 @@ public GetAllCustomersResponse Send(GetAllCustomersQuery query)
 ```csharp
 public class GetAllCustomersHandler : IHandleQueries<GetAllCustomersQuery, GetAllCustomersResponse>
 {
-    public GetAllCustomersResponse Handle(GetAllCustomersQuery query)
+    public async Task<GetAllCustomersResponse> HandleAsync(GetAllCustomersQuery query)
     {
+        await Task.Delay(50);
         return new GetAllCustomersResponse
         {
-            Cutomers = //complex query
+            Cutomers = Db.Customers
         };
     }
 }
