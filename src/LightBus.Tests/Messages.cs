@@ -19,4 +19,20 @@
     {
         public bool IsHandled { get; set; }
     }
+
+    public class CommandWithException : ICommand
+    {
+    }
+
+    public class EventWithException : IEvent
+    {
+    }
+
+    public class Query : IQuery<Response>
+    {
+    }
+
+    public class QueryWithExcepetion : IQuery<Response>
+    {
+    }
 }

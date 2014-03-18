@@ -1,3 +1,4 @@
+using System;
 using System.Threading.Tasks;
 
 namespace LightBus.Tests
@@ -43,6 +44,14 @@ namespace LightBus.Tests
         }
     }
 
+    public class CommandHandlerThatThrowException : IHandleMessages<CommandWithException>
+    {
+        public Task HandleAsync(CommandWithException message)
+        {
+            throw new InvalidOperationException();
+        }
+    }
+
     public class EventHandler : IHandleMessages<Event>
     {
         public Task HandleAsync(Event @event)
@@ -83,6 +92,22 @@ namespace LightBus.Tests
         public Task<Response> HandleAsync(Query query)
         {
             return TaskExt.FromResult(new Response {IsHandled = true});
+        }
+    }
+
+    public class EventWithExceptionHandler : IHandleMessages<EventWithException>
+    {
+        public Task HandleAsync(EventWithException message)
+        {
+            throw new InvalidOperationException();
+        }
+    }
+
+    public class QueryWithExceptionHandler : IHandleQueries<QueryWithExcepetion, Response>
+    {
+        public Task<Response> HandleAsync(QueryWithExcepetion query)
+        {
+            throw new InvalidOperationException();
         }
     }
 }

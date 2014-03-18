@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 using LightBus.Tests.LightInject;
 using Should;
 using Xunit;
@@ -30,7 +31,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command).Wait());
         }
 
         [Fact]
@@ -40,7 +41,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command).Wait());
         }
 
         [Fact]
@@ -72,18 +73,15 @@ namespace LightBus.Tests
         }
 
         [Fact]
-        public void When_sending_a_command_should_invoke_command_handler_and_be_able_to_wait_for_async_result()
+        public async Task When_sending_a_command_should_invoke_command_handler_and_be_able_to_wait_for_async_result()
         {
             var serviceContainer = new ServiceContainer();
             var bus = new Bus(serviceContainer.GetAllInstances);
             serviceContainer.Register<IBus>(sf => bus);
             serviceContainer.Register<IHandleMessages<AsyncCommand>, AsyncCommandHandler>();
             var command = new AsyncCommand();
-            var autoResetEvent = new AutoResetEvent(false);
 
-            var task = bus.SendAsync(command);
-            task.ContinueWith(tsk => autoResetEvent.Set());
-            autoResetEvent.WaitOne();
+            await bus.SendAsync(command);
 
             command.IsHandled.ShouldBeTrue();
         }
@@ -110,7 +108,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query).Wait());
         }
 
         [Fact]
@@ -120,7 +118,7 @@ namespace LightBus.Tests
             var bus = new Bus(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query).Wait());
         }
 
         [Fact]
@@ -137,6 +135,36 @@ namespace LightBus.Tests
                 bus.PublishAsync(message);
                 bus.PublishAsync(message);
             });
+        }
+
+        [Fact]
+        public void When_command_handler_throws_exception_should_propagate_exception()
+        {
+            var serviceContainer = new ServiceContainer();
+            serviceContainer.Register<IHandleMessages<CommandWithException>, CommandHandlerThatThrowException>();
+            var bus = new Bus(serviceContainer.GetAllInstances);
+
+            Assert.Throws<InvalidOperationException>(() => bus.SendAsync(new CommandWithException()).Wait());
+        }
+
+        [Fact]
+        public void When_event_handler_throws_exception_should_propagate_exception()
+        {
+            var serviceContainer = new ServiceContainer();
+            serviceContainer.Register<IHandleMessages<EventWithException>, EventWithExceptionHandler>();
+            var bus = new Bus(serviceContainer.GetAllInstances);
+
+            Assert.Throws<InvalidOperationException>(() => bus.PublishAsync(new EventWithException()).Wait());
+        }
+
+        [Fact]
+        public void When_query_handler_throws_exception_should_propagate_exception()
+        {
+            var serviceContainer = new ServiceContainer();
+            serviceContainer.Register<IHandleQueries<QueryWithExcepetion, Response>, QueryWithExceptionHandler>();
+            var bus = new Bus(serviceContainer.GetAllInstances);
+
+            Assert.Throws<InvalidOperationException>(() => bus.SendAsync(new QueryWithExcepetion()).Wait());
         }
     }
 }
