@@ -1,5 +1,4 @@
 using System;
-using System.Threading;
 using System.Threading.Tasks;
 using LightBus.Tests.LightInject;
 using Should;
@@ -23,15 +22,19 @@ namespace LightBus.Tests
         }
 
         [Fact]
-        public void When_sending_a_command_and_there_is_multiple_command_handlers_should_throw_exception()
+        public void When_sending_a_command_should_polymorphic_dispatch_to_command_handlers()
         {
             var serviceContainer = new ServiceContainer();
             serviceContainer.Register<IHandleMessages<Command>, CommandHandler>();
-            serviceContainer.Register<IHandleMessages<Command>, AnotherCommandHandler>("another");
+            var messageHandler = new MessageHandler();
+            serviceContainer.RegisterInstance<IHandleMessages<IMessage>>(messageHandler);
             var bus = new Bus(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command).Wait());
+            bus.SendAsync(command);
+
+            command.IsHandled.ShouldBeTrue();
+            messageHandler.IsHandled.ShouldBeTrue();
         }
 
         [Fact]
@@ -55,6 +58,23 @@ namespace LightBus.Tests
             bus.PublishAsync(message);
 
             message.NumberOfTimesHandled.ShouldEqual(2);
+        }
+
+        [Fact]
+        public void When_publishing_an_event_should_polymorphic_dispatch_to_all_handlers()
+        {
+            var serviceContainer = new ServiceContainer();
+            serviceContainer.Register<IHandleMessages<Event>, EventHandler>();
+            serviceContainer.Register<IHandleMessages<Event>, AnotherEventHandler>("Another");
+            var messageHandler = new MessageHandler();
+            serviceContainer.RegisterInstance<IHandleMessages<IMessage>>(messageHandler);
+            var bus = new Bus(serviceContainer.GetAllInstances);
+            var message = new Event();
+
+            bus.PublishAsync(message);
+
+            message.NumberOfTimesHandled.ShouldEqual(2);
+            messageHandler.IsHandled.ShouldBeTrue();
         }
 
         [Fact]

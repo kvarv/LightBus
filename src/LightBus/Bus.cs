@@ -28,7 +28,11 @@ namespace LightBus
         /// <returns>The task object representing the asynchronous operation.</returns>
         public Task PublishAsync(IEvent message)
         {
-            var handlers = _dependencyResolver.GetAllMessageHandlers(message.GetType());
+            var messageType = message.GetType();
+            var interfaceTypes = messageType.GetInterfaces();
+            var types = new List<Type> { messageType };
+            types.AddRange(interfaceTypes);
+            var handlers = types.SelectMany(x => _dependencyResolver.GetAllMessageHandlers(x));
             var results = handlers.Cast<dynamic>().Select(handler => handler.HandleAsync((dynamic)message));
             var tasks = results.Select(task => (Task)task).ToArray();
             return Task.Factory.ContinueWhenAll(tasks, completedTasks =>
@@ -48,11 +52,20 @@ namespace LightBus
         public Task SendAsync(ICommand message)
         {
             var commandType = message.GetType();
-            var handlers = _dependencyResolver.GetAllMessageHandlers(commandType).ToList();
+            var interfaceTypes = commandType.GetInterfaces();
+            var types = new List<Type> {commandType};
+            types.AddRange(interfaceTypes);
+            var handlers = types.SelectMany(x => _dependencyResolver.GetAllMessageHandlers(x));
             handlers.CheckIfThereAreAnyFor(commandType);
-            handlers.CheckIfThereIsMoreThanOneFor(commandType);
-            dynamic handler = handlers.Single();
-            return handler.HandleAsync((dynamic)message);
+            var results = handlers.Cast<dynamic>().Select(handler => handler.HandleAsync((dynamic)message));
+            var tasks = results.Select(task => (Task)task).ToArray();
+            return Task.Factory.ContinueWhenAll(tasks, completedTasks =>
+            {
+                var exceptions = completedTasks.Where(task => task.Exception != null).Select(task => task.Exception);
+                if (exceptions.Any())
+                    throw new AggregateException(exceptions);
+                return completedTasks;
+            });
         }
 
         /// <summary>

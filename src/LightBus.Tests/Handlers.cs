@@ -21,6 +21,17 @@ namespace LightBus.Tests
         }
     }
 
+    public class MessageHandler : IHandleMessages<IMessage>
+    {
+        public bool IsHandled { get; set; }
+
+        public Task HandleAsync(IMessage command)
+        {
+            IsHandled = true;
+            return TaskExt.FromResult();
+        }
+    }
+
     public class CommandHandlerThatSendsAnEvent : IHandleMessages<Command>
     {
         private readonly IBus _bus;
