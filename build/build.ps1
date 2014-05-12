@@ -14,7 +14,7 @@ properties {
 	$assembly_file_version = $assembly_version
 }
 
-task default -depends compile, test, reset_assembly_info
+task default -depends compile, test
 
 task mark_release {
     $global:build_configuration = "release"
@@ -25,7 +25,7 @@ task clean {
 	mkdir $build_artifacts_dir  -ErrorAction SilentlyContinue  | out-null
 }
 
-task compile -depends clean, create_common_assembly_info {
+task compile -depends clean {
     exec { & $tools_dir\nuget\nuget.exe restore $source_dir\LightBus.sln }
 	exec { msbuild  $source_dir\LightBus.sln /t:Clean /t:Build /p:Configuration=$build_configuration /v:q /nologo }
 }
@@ -34,7 +34,7 @@ task test {
     exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net40\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
 }
 
-task create_package -depends mark_release, compile, test, create_nuspec, reset_assembly_info -precondition { return $version -ne ''} {
+task create_package -depends mark_release, create_common_assembly_info, compile, test, create_nuspec, reset_assembly_info -precondition { return $version -ne ''} {
 	exec { & $tools_dir\nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
 }
 
