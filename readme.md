@@ -6,7 +6,9 @@ Typical use case is directly behind your service boundary, for example server si
 
 **LightBus** is all async and uses the Task Parallell Library which means that you could use async/await on .NET 4.5. Still, **LightBus** targets .NET 4.0
 
-##Installation
+**LightBus** now supports polymorphic dispatching of events and commands (finds interfaces only)! See the [LightBus.Examples](https://github.com/kvarv/LightBus.Examples) repository for examples.
+
+##Installation through NuGet
 ```PM> Install-Package LightBus```
 
 ##Define a command
