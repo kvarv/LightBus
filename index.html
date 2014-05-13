@@ -1,33 +1,36 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
+
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>LightBus by kvarv</title>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="LightBus : LightBus is a lightweight in-process bus" />
 
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>LightBus</title>
   </head>
+
   <body>
-    <div class="wrapper">
-      <header>
-        <h1>LightBus</h1>
-        <p>LightBus is a lightweight in-process bus</p>
 
-        <p class="view"><a href="https://github.com/kvarv/LightBus">View the Project on GitHub <small>kvarv/LightBus</small></a></p>
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/kvarv/LightBus">View on GitHub</a>
 
+          <h1 id="project_title">LightBus</h1>
+          <h2 id="project_tagline">LightBus is a lightweight in-process bus</h2>
 
-        <ul>
-          <li><a href="https://github.com/kvarv/LightBus/zipball/master">Download <strong>ZIP File</strong></a></li>
-          <li><a href="https://github.com/kvarv/LightBus/tarball/master">Download <strong>TAR Ball</strong></a></li>
-          <li><a href="https://github.com/kvarv/LightBus">View On <strong>GitHub</strong></a></li>
-        </ul>
-      </header>
-      <section>
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/kvarv/LightBus/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/kvarv/LightBus/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
         <h1>
 <a name="lightbus" class="anchor" href="#lightbus"><span class="octicon octicon-link"></span></a>LightBus</h1>
 
@@ -38,160 +41,25 @@
 <p><strong>LightBus</strong> is all async and uses the Task Parallell Library which means that you could use async/await on .NET 4.5. Still, <strong>LightBus</strong> targets .NET 4.0</p>
 
 <h2>
-<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+<a name="installation-through-nuget" class="anchor" href="#installation-through-nuget"><span class="octicon octicon-link"></span></a>Installation through NuGet</h2>
 
 <p><code>PM&gt; Install-Package LightBus</code></p>
 
 <h2>
-<a name="define-a-command" class="anchor" href="#define-a-command"><span class="octicon octicon-link"></span></a>Define a command</h2>
+<a name="how-do-i-get-started" class="anchor" href="#how-do-i-get-started"><span class="octicon octicon-link"></span></a>How do I get started?</h2>
 
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">CreateCustomerCommand</span> <span class="p">:</span> <span class="n">ICommand</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="kt">string</span> <span class="n">Name</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="send-a-command" class="anchor" href="#send-a-command"><span class="octicon octicon-link"></span></a>Send a command</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerService</span> <span class="p">:</span> <span class="n">ICustomerService</span>
-<span class="p">{</span>
-    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IBus</span> <span class="n">_bus</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="nf">CustomerService</span><span class="p">(</span><span class="n">IBus</span> <span class="n">bus</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">_bus</span> <span class="p">=</span> <span class="n">bus</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">SendCommand</span><span class="p">(</span><span class="n">CreateCustomerCommand</span> <span class="n">command</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">await</span> <span class="n">_bus</span><span class="p">.</span><span class="n">SendAsync</span><span class="p">(</span><span class="n">command</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="handle-a-command" class="anchor" href="#handle-a-command"><span class="octicon octicon-link"></span></a>Handle a command</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">CreateCustomerHandler</span> <span class="p">:</span> <span class="n">IHandleMessages</span><span class="p">&lt;</span><span class="n">CreateCustomerCommand</span><span class="p">&gt;</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">HandleAsync</span><span class="p">(</span><span class="n">CreateCustomerCommand</span> <span class="n">command</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">await</span> <span class="n">Task</span><span class="p">.</span><span class="n">Delay</span><span class="p">(</span><span class="m">100</span><span class="p">);</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating customer {0}."</span><span class="p">,</span> <span class="n">command</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="define-an-event" class="anchor" href="#define-an-event"><span class="octicon octicon-link"></span></a>Define an event</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerCreatedEvent</span> <span class="p">:</span> <span class="n">IEvent</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="n">Guid</span> <span class="n">CustomerId</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="publish-an-event" class="anchor" href="#publish-an-event"><span class="octicon octicon-link"></span></a>Publish an event</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">CreateCustomerHandler</span> <span class="p">:</span> <span class="n">IHandleMessages</span><span class="p">&lt;</span><span class="n">CreateCustomerCommand</span><span class="p">&gt;</span>
-<span class="p">{</span>
-    <span class="k">private</span> <span class="k">readonly</span> <span class="n">IBus</span> <span class="n">_bus</span><span class="p">;</span>
-
-    <span class="k">public</span> <span class="nf">CreateCustomerHandler</span><span class="p">(</span><span class="n">IBus</span> <span class="n">bus</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">_bus</span> <span class="p">=</span> <span class="n">bus</span><span class="p">;</span>
-    <span class="p">}</span>
-
-    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">HandleAsync</span><span class="p">(</span><span class="n">CreateCustomerCommand</span> <span class="n">command</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Creating customer {0}."</span><span class="p">,</span> <span class="n">command</span><span class="p">.</span><span class="n">Name</span><span class="p">);</span>
-        <span class="k">await</span> <span class="n">_bus</span><span class="p">.</span><span class="n">PublishAsync</span><span class="p">(</span><span class="k">new</span> <span class="n">CustomerCreatedEvent</span> <span class="p">{</span> <span class="n">CustomerId</span> <span class="p">=</span> <span class="n">Guid</span><span class="p">.</span><span class="n">NewGuid</span><span class="p">()</span> <span class="p">});</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="handle-an-event" class="anchor" href="#handle-an-event"><span class="octicon octicon-link"></span></a>Handle an event</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">CustomerCreatedHandler</span> <span class="p">:</span> <span class="n">IHandleMessages</span><span class="p">&lt;</span><span class="n">CustomerCreatedEvent</span><span class="p">&gt;</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span> <span class="nf">HandleAsync</span><span class="p">(</span><span class="n">CustomerCreatedEvent</span> <span class="n">command</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">await</span> <span class="n">Task</span><span class="p">.</span><span class="n">Delay</span><span class="p">(</span><span class="m">50</span><span class="p">);</span>
-        <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="s">"Customer with id {0} created."</span><span class="p">,</span> <span class="n">command</span><span class="p">.</span><span class="n">CustomerId</span><span class="p">);</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="define-a-query" class="anchor" href="#define-a-query"><span class="octicon octicon-link"></span></a>Define a query</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">GetAllCustomersQuery</span> <span class="p">:</span> <span class="n">IQuery</span><span class="p">&lt;</span><span class="n">GetAllCustomersResponse</span><span class="p">&gt;</span>
-<span class="p">{</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="define-a-query-response" class="anchor" href="#define-a-query-response"><span class="octicon octicon-link"></span></a>Define a query response</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">GetAllCustomersResponse</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="n">List</span><span class="p">&lt;</span><span class="n">Customer</span><span class="p">&gt;</span> <span class="n">Cutomers</span> <span class="p">{</span> <span class="k">get</span><span class="p">;</span> <span class="k">set</span><span class="p">;</span> <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="send-a-query" class="anchor" href="#send-a-query"><span class="octicon octicon-link"></span></a>Send a query</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">GetAllCustomersResponse</span><span class="p">&gt;</span> <span class="n">SendQuery</span><span class="p">(</span><span class="n">GetAllCustomersQuery</span> <span class="n">query</span><span class="p">)</span>
-<span class="p">{</span>
-    <span class="k">return</span> <span class="k">await</span> <span class="n">_bus</span><span class="p">.</span><span class="n">SendAsync</span><span class="p">(</span><span class="n">query</span><span class="p">);</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="handle-a-query" class="anchor" href="#handle-a-query"><span class="octicon octicon-link"></span></a>Handle a query</h2>
-
-<div class="highlight highlight-csharp"><pre><span class="k">public</span> <span class="k">class</span> <span class="nc">GetAllCustomersHandler</span> <span class="p">:</span> <span class="n">IHandleQueries</span><span class="p">&lt;</span><span class="n">GetAllCustomersQuery</span><span class="p">,</span> <span class="n">GetAllCustomersResponse</span><span class="p">&gt;</span>
-<span class="p">{</span>
-    <span class="k">public</span> <span class="k">async</span> <span class="n">Task</span><span class="p">&lt;</span><span class="n">GetAllCustomersResponse</span><span class="p">&gt;</span> <span class="n">HandleAsync</span><span class="p">(</span><span class="n">GetAllCustomersQuery</span> <span class="n">query</span><span class="p">)</span>
-    <span class="p">{</span>
-        <span class="k">await</span> <span class="n">Task</span><span class="p">.</span><span class="n">Delay</span><span class="p">(</span><span class="m">50</span><span class="p">);</span>
-        <span class="k">return</span> <span class="k">new</span> <span class="n">GetAllCustomersResponse</span>
-        <span class="p">{</span>
-            <span class="n">Cutomers</span> <span class="p">=</span> <span class="n">Db</span><span class="p">.</span><span class="n">Customers</span>
-        <span class="p">};</span>
-    <span class="p">}</span>
-<span class="p">}</span>
-</pre></div>
-
-<h2>
-<a name="set-up-an-ioc-container" class="anchor" href="#set-up-an-ioc-container"><span class="octicon octicon-link"></span></a>Set up an IoC container</h2>
-
-<h3>
-<a name="lightinject-setup" class="anchor" href="#lightinject-setup"><span class="octicon octicon-link"></span></a><a href="http://www.lightinject.net/">LightInject</a> setup</h3>
-
-<div class="highlight highlight-csharp"><pre><span class="kt">var</span> <span class="n">serviceContainer</span> <span class="p">=</span> <span class="k">new</span> <span class="n">ServiceContainer</span><span class="p">();</span>
-<span class="c1">//Register all types that implements IHandleMessages and IHandleQueries</span>
-<span class="n">serviceContainer</span><span class="p">.</span><span class="n">RegisterAssembly</span><span class="p">(</span><span class="n">Assembly</span><span class="p">.</span><span class="n">GetExecutingAssembly</span><span class="p">(),</span> <span class="p">(</span><span class="n">serviceType</span><span class="p">,</span> <span class="n">implementingType</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="n">serviceType</span><span class="p">.</span><span class="n">IsGenericType</span> <span class="p">&amp;&amp;</span> <span class="p">(</span><span class="n">serviceType</span><span class="p">.</span><span class="n">GetGenericTypeDefinition</span><span class="p">()</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">IHandleMessages</span><span class="p">&lt;&gt;)</span> <span class="p">||</span> <span class="n">serviceType</span><span class="p">.</span><span class="n">GetGenericTypeDefinition</span><span class="p">()</span> <span class="p">==</span> <span class="k">typeof</span><span class="p">(</span><span class="n">IHandleQueries</span><span class="p">&lt;,&gt;)));</span>
-
-<span class="c1">//Register the Bus</span>
-<span class="n">serviceContainer</span><span class="p">.</span><span class="n">Register</span><span class="p">&lt;</span><span class="n">IBus</span><span class="p">&gt;(</span><span class="n">sf</span> <span class="p">=&gt;</span> <span class="k">new</span> <span class="n">Bus</span><span class="p">(</span><span class="n">sf</span><span class="p">.</span><span class="n">GetAllInstances</span><span class="p">),</span> <span class="k">new</span> <span class="n">PerContainerLifetime</span><span class="p">());</span>
-</pre></div>
-
-<h2>
-<a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
-
-<p>See the <a href="https://github.com/kvarv/LightBus.Examples">LightBus.Examples</a> repository</p>
+<p>Check out the <a href="https://github.com/kvarv/LightBus/wiki">wiki</a>!</p>
       </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/kvarv">kvarv</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">LightBus maintained by <a href="https://github.com/kvarv">kvarv</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-    <script src="javascripts/scale.fix.js"></script>
+
               <script type="text/javascript">
             var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
             document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -202,6 +70,7 @@
             pageTracker._trackPageview();
             } catch(err) {}
           </script>
+
 
   </body>
 </html>
