@@ -25,9 +25,12 @@ task clean {
 	mkdir $build_artifacts_dir  -ErrorAction SilentlyContinue  | out-null
 }
 
-task compile -depends clean {
-    exec { & $tools_dir\nuget\nuget.exe restore $source_dir\LightBus.sln }
+task compile -depends clean, restore_packages {
 	exec { msbuild  $source_dir\LightBus.sln /t:Clean /t:Build /p:Configuration=$build_configuration /v:q /nologo }
+}
+
+task restore_packages {
+	exec { & $tools_dir\nuget\nuget.exe restore $source_dir\LightBus.sln }	
 }
 
 task test {	
@@ -48,13 +51,13 @@ task create_nuspec {
     <metadata>
         <id>LightBus</id>
         <version>$version</version>
-        <authors>Gøran Sveia Kvarv</authors>
-        <owners>Gøran Sveia Kvarv</owners>
+        <authors>Gï¿½ran Sveia Kvarv</authors>
+        <owners>Gï¿½ran Sveia Kvarv</owners>
         <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
         <projectUrl>https://github.com/kvarv/LightBus</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>LightBus is a lightweight in-process bus.</description>
-        <copyright>Gøran Sveia Kvarv</copyright>
+        <copyright>Gï¿½ran Sveia Kvarv</copyright>
         <tags>bus mediator event command query cqrs</tags>
     </metadata>   
     <files>
@@ -72,7 +75,7 @@ task create_common_assembly_info {
 
 [assembly: AssemblyVersionAttribute(""$assembly_version"")]
 [assembly: AssemblyFileVersionAttribute(""$assembly_file_version"")]
-[assembly: AssemblyCopyrightAttribute(""Copyright Gøran Sveia Kvarv 2011-" + $date.Year + """)]
+[assembly: AssemblyCopyrightAttribute(""Copyright Gï¿½ran Sveia Kvarv 2011-" + $date.Year + """)]
 [assembly: AssemblyProductAttribute(""LightBus"")]
 [assembly: AssemblyTrademarkAttribute(""LightBus"")]
 [assembly: AssemblyCompanyAttribute("""")]
