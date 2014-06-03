@@ -10,11 +10,14 @@ properties {
 	$test_dir = "$build_artifacts_dir\tests"
 	$global:build_configuration = "debug"
 	$nuspec_file = "$build_artifacts_dir\LightBus.nuspec"
-	$assembly_version = if($version) { $version } else { "0.0.0" }
-	$assembly_file_version = $assembly_version
+    $version = if ($env:APPVEYOR_BUILD_VERSION -ne $NULL) { $env:APPVEYOR_BUILD_VERSION } else { '0.0.0' }
+    $assembly_version = $version -replace "\-.*$", ".0"
+    $assembly_file_version = $version -replace "-[^0-9]*", "."
 }
 
 task default -depends compile, test
+
+task ci -depends create_package
 
 task mark_release {
     $global:build_configuration = "release"
@@ -51,13 +54,13 @@ task create_nuspec {
     <metadata>
         <id>LightBus</id>
         <version>$version</version>
-        <authors>G�ran Sveia Kvarv</authors>
-        <owners>G�ran Sveia Kvarv</owners>
+        <authors>Gøran Sveia Kvarv</authors>
+        <owners>Gøran Sveia Kvarv</owners>
         <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
         <projectUrl>https://github.com/kvarv/LightBus</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>LightBus is a lightweight in-process bus.</description>
-        <copyright>G�ran Sveia Kvarv</copyright>
+        <copyright>Gøran Sveia Kvarv</copyright>
         <tags>bus mediator event command query cqrs</tags>
     </metadata>   
     <files>
@@ -75,7 +78,7 @@ task create_common_assembly_info {
 
 [assembly: AssemblyVersionAttribute(""$assembly_version"")]
 [assembly: AssemblyFileVersionAttribute(""$assembly_file_version"")]
-[assembly: AssemblyCopyrightAttribute(""Copyright G�ran Sveia Kvarv 2011-" + $date.Year + """)]
+[assembly: AssemblyCopyrightAttribute(""Copyright Gøran Sveia Kvarv 2011-" + $date.Year + """)]
 [assembly: AssemblyProductAttribute(""LightBus"")]
 [assembly: AssemblyTrademarkAttribute(""LightBus"")]
 [assembly: AssemblyCompanyAttribute("""")]
