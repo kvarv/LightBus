@@ -4,5 +4,8 @@ param(
     [Parameter(Position=1,Mandatory=0)]
     [string]$version
 )
-$env:APPVEYOR_BUILD_VERSION = $version
+if($version -ne $null){
+    $env:APPVEYOR_BUILD_VERSION = $version
+}
+
 .\tools\psake\psake .\build\build.ps1 -taskList $tasks; if ($psake.build_success -eq $false) { write-host "ERROR" -fore RED; exit 1 } else { exit 0 }
