@@ -3,36 +3,36 @@ using System.Threading.Tasks;
 
 namespace LightBus.Tests
 {
-    public class CommandHandler : IHandleMessages<Command>
+    public class CommandHandler : IHandleRequestsAsync<Command, Unit>
     {
-        public Task HandleAsync(Command command)
+        public Task<Unit> HandleAsync(Command command)
         {
             command.IsHandled = true;
-            return TaskExt.FromResult();
+            return TaskExt.FromResult(Unit.Value);
         }
     }
 
-    public class AnotherCommandHandler : IHandleMessages<Command>
+    public class AnotherCommandHandler : IHandleRequestsAsync<Command, Unit>
     {
-        public Task HandleAsync(Command command)
+        public Task<Unit> HandleAsync(Command command)
         {
             command.IsHandled = true;
-            return TaskExt.FromResult();
+            return TaskExt.FromResult(Unit.Value);
         }
     }
 
-    public class MessageHandler : IHandleMessages<IMessage>
+    public class MessageHandler : IHandleEventsAsync<IEvent>
     {
         public bool IsHandled { get; set; }
 
-        public Task HandleAsync(IMessage command)
+        public Task HandleAsync(IEvent command)
         {
             IsHandled = true;
             return TaskExt.FromResult();
         }
     }
 
-    public class CommandHandlerThatSendsAnEvent : IHandleMessages<Command>
+    public class CommandHandlerThatSendsAnEvent : IHandleRequestsAsync<Command, Unit>
     {
         private readonly IMediator _mediator;
 
@@ -41,29 +41,34 @@ namespace LightBus.Tests
             _mediator = mediator;
         }
 
-        public Task HandleAsync(Command command)
+        public async Task<Unit> HandleAsync(Command command)
         {
-            return _mediator.PublishAsync(new EventWithCommand {Command = command});
+            await _mediator.PublishAsync(new EventWithCommand {Command = command});
+            return Unit.Value;
         }
     }
 
-    public class AsyncCommandHandler : IHandleMessages<AsyncCommand>
+    public class AsyncCommandHandler : IHandleRequestsAsync<AsyncCommand, Unit>
     {
-        public Task HandleAsync(AsyncCommand command)
+        public Task<Unit> HandleAsync(AsyncCommand command)
         {
-            return TaskExt.Delay(50).ContinueWith(task => command.IsHandled = true);
+            return TaskExt.Delay(50).ContinueWith(task =>
+            {
+                command.IsHandled = true;
+                return Unit.Value;
+            });
         }
     }
 
-    public class CommandHandlerThatThrowException : IHandleMessages<CommandWithException>
+    public class CommandHandlerThatThrowException : IHandleRequestsAsync<CommandWithException, Unit>
     {
-        public Task HandleAsync(CommandWithException message)
+        public Task<Unit> HandleAsync(CommandWithException message)
         {
             throw new InvalidOperationException();
         }
     }
 
-    public class EventHandler : IHandleMessages<Event>
+    public class EventHandler : IHandleEventsAsync<Event>
     {
         public Task HandleAsync(Event @event)
         {
@@ -72,7 +77,7 @@ namespace LightBus.Tests
         }
     }
 
-    public class AnotherEventHandler : IHandleMessages<Event>
+    public class AnotherEventHandler : IHandleEventsAsync<Event>
     {
         public Task HandleAsync(Event @event)
         {
@@ -81,7 +86,7 @@ namespace LightBus.Tests
         }
     }
 
-    public class EventWithCommandHandler : IHandleMessages<EventWithCommand>
+    public class EventWithCommandHandler : IHandleEventsAsync<EventWithCommand>
     {
         public Task HandleAsync(EventWithCommand @event)
         {
@@ -90,7 +95,7 @@ namespace LightBus.Tests
         }
     }
 
-    public class QueryHandler : IHandleQueries<Query, Response>
+    public class QueryHandler : IHandleRequestsAsync<Query, Response>
     {
         public Task<Response> HandleAsync(Query query)
         {
@@ -98,7 +103,7 @@ namespace LightBus.Tests
         }
     }
 
-    public class AnotherQueryHandler : IHandleQueries<Query, Response>
+    public class AnotherQueryHandler : IHandleRequestsAsync<Query, Response>
     {
         public Task<Response> HandleAsync(Query query)
         {
@@ -106,7 +111,7 @@ namespace LightBus.Tests
         }
     }
 
-    public class EventWithExceptionHandler : IHandleMessages<EventWithException>
+    public class EventWithExceptionHandler : IHandleEventsAsync<EventWithException>
     {
         public Task HandleAsync(EventWithException message)
         {
@@ -114,7 +119,7 @@ namespace LightBus.Tests
         }
     }
 
-    public class QueryWithExceptionHandler : IHandleQueries<QueryWithExcepetion, Response>
+    public class QueryWithExceptionHandler : IHandleRequestsAsync<QueryWithExcepetion, Response>
     {
         public Task<Response> HandleAsync(QueryWithExcepetion query)
         {

@@ -1,6 +1,6 @@
 ﻿namespace LightBus.Tests
 {
-    public class Command : ICommand
+    public class Command : IRequest<Unit>
     {
         public bool IsHandled { get; set; }
     }
@@ -15,12 +15,12 @@
         public Command Command { get; set; }
     }
 
-    public class AsyncCommand : ICommand
+    public class AsyncCommand : IRequest<Unit>
     {
         public bool IsHandled { get; set; }
     }
 
-    public class CommandWithException : ICommand
+    public class CommandWithException : IRequest<Unit>
     {
     }
 
@@ -28,11 +28,11 @@
     {
     }
 
-    public class Query : IQuery<Response>
+    public class Query : IRequest<Response>
     {
     }
 
-    public class QueryWithExcepetion : IQuery<Response>
+    public class QueryWithExcepetion : IRequest<Response>
     {
     }
 }

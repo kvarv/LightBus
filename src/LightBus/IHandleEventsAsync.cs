@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 
 namespace LightBus
 {
-    public interface IHandleMessages<in TMessage> where TMessage : IMessage
+    public interface IHandleEventsAsync<in TMessage> where TMessage : IEvent
     {
         Task HandleAsync(TMessage message);
     }

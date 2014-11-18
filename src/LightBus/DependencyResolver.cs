@@ -16,13 +16,13 @@ namespace LightBus
 
         public IEnumerable<object> GetAllMessageHandlers(Type messageType)
         {
-            Func<Type, Type> handlerTypeFactory = t => typeof (IHandleMessages<>).MakeGenericType(t);
+            Func<Type, Type> handlerTypeFactory = t => typeof (IHandleEventsAsync<>).MakeGenericType(t);
             return GetAllInstancesOfType(messageType, handlerTypeFactory);
         }
 
         public IEnumerable<object> GetAllQueryHandlers(Type queryType, Type responseType)
         {
-            Func<Type, Type> handlerTypeFactory = t => typeof (IHandleQueries<,>).MakeGenericType(queryType, responseType);
+            Func<Type, Type> handlerTypeFactory = t => typeof (IHandleRequestsAsync<,>).MakeGenericType(queryType, responseType);
             return GetAllInstancesOfType(queryType, handlerTypeFactory);
         }
 

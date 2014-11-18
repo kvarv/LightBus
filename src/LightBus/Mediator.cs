@@ -45,36 +45,12 @@ namespace LightBus
         }
 
         /// <summary>
-        /// Send a command as an asynchronous operation.
-        /// </summary>
-        /// <param name="message">The <see cref="ICommand"/> to send.</param>
-        /// <returns>The task object representing the asynchronous operation.</returns>
-        public Task SendAsync(ICommand message)
-        {
-            var commandType = message.GetType();
-            var interfaceTypes = commandType.GetInterfaces();
-            var types = new List<Type> {commandType};
-            types.AddRange(interfaceTypes);
-            var handlers = types.SelectMany(x => _dependencyResolver.GetAllMessageHandlers(x));
-            handlers.CheckIfThereAreAnyFor(commandType);
-            var results = handlers.Cast<dynamic>().Select(handler => handler.HandleAsync((dynamic)message));
-            var tasks = results.Select(task => (Task)task).ToArray();
-            return Task.Factory.ContinueWhenAll(tasks, completedTasks =>
-            {
-                var exceptions = completedTasks.Where(task => task.Exception != null).Select(task => task.Exception);
-                if (exceptions.Any())
-                    throw new AggregateException(exceptions);
-                return completedTasks;
-            });
-        }
-
-        /// <summary>
         /// Send a query as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TResponse">The response of the query.</typeparam>
-        /// <param name="query">The <see cref="IQuery{TResponse}"/> to send.</param>
+        /// <param name="query">The <see cref="IRequest{TResponse}"/> to send.</param>
         /// <returns>The task object representing the asynchronous operation.</returns>   
-        public Task<TResponse> SendAsync<TResponse>(IQuery<TResponse> query)
+        public Task<TResponse> SendAsync<TResponse>(IRequest<TResponse> query)
         {
             var queryType = query.GetType();
             var handlers = _dependencyResolver.GetAllQueryHandlers(queryType, typeof(TResponse)).ToList();

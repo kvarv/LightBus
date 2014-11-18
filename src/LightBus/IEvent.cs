@@ -1,6 +1,6 @@
 namespace LightBus
 {
-    public interface IEvent : IMessage
+    public interface IEvent
     {
     }
 }
