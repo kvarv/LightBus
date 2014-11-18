@@ -24,6 +24,9 @@ task mark_release {
 }
 
 task clean {
+	Write-Host "Build version is: $env:APPVEYOR_BUILD_VERSION"
+	Write-Host "Build number is: $env:APPVEYOR_BUILD_NUMBER"
+	
 	rd $build_artifacts_dir -recurse -force  -ErrorAction SilentlyContinue | out-null
 	mkdir $build_artifacts_dir  -ErrorAction SilentlyContinue  | out-null
 }
