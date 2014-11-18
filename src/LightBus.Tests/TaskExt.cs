@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using System.Timers;
 
-namespace LightBus
+namespace LightBus.Tests
 {
     public static class TaskExt
     {

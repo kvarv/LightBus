@@ -53,11 +53,10 @@
     <Compile Include="HandlersExtensions.cs" />
     <Compile Include="IEvent.cs" />
     <Compile Include="IMediator.cs" />
-    <Compile Include="IHandleRequestsAsync.cs" />
-    <Compile Include="IHandleEventsAsync.cs" />
+    <Compile Include="IHandleRequests.cs" />
+    <Compile Include="IHandleEvents.cs" />
     <Compile Include="IRequest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TaskExt.cs" />
     <Compile Include="Unit.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

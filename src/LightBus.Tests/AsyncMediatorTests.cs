@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using LightBus.Tests.LightInject;
 using Should;
@@ -6,17 +6,17 @@ using Xunit;
 
 namespace LightBus.Tests
 {
-    public class MediatorTests
+    public class AsyncMediatorTests
     {
         [Fact]
         public void When_sending_a_command_and_there_is_only_one_command_handler_should_invoke_command_handler()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<Command, Unit>, CommandHandler>();
+            serviceContainer.Register<IHandleRequestsAsync<Command, Unit>, Async.CommandHandler>();
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            bus.Send(command);
+            bus.SendAsync(command);
 
             command.IsHandled.ShouldBeTrue();
         }
@@ -28,18 +28,18 @@ namespace LightBus.Tests
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var command = new Command();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(command));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(command).Wait());
         }
 
         [Fact]
         public void When_publishing_an_event_should_invoke_all_registered_event_handlers()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.RegisterAssembly(typeof(MediatorTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IHandleEvents<>));
+            serviceContainer.RegisterAssembly(typeof (AsyncMediatorTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof (IHandleEventsAsync<>));
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var message = new Event();
 
-            bus.Publish(message);
+            bus.PublishAsync(message);
 
             message.NumberOfTimesHandled.ShouldEqual(2);
         }
@@ -48,14 +48,14 @@ namespace LightBus.Tests
         public void When_publishing_an_event_should_polymorphic_dispatch_to_all_handlers()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleEvents<Event>, EventHandler>();
-            serviceContainer.Register<IHandleEvents<Event>, AnotherEventHandler>("Another");
-            var messageHandler = new MessageHandler();
-            serviceContainer.RegisterInstance<IHandleEvents<IEvent>>(messageHandler);
+            serviceContainer.Register<IHandleEventsAsync<Event>, Async.EventHandler>();
+            serviceContainer.Register<IHandleEventsAsync<Event>, Async.AnotherEventHandler>("Another");
+            var messageHandler = new Async.MessageHandler();
+            serviceContainer.RegisterInstance<IHandleEventsAsync<IEvent>>(messageHandler);
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var message = new Event();
 
-            bus.Publish(message);
+            bus.PublishAsync(message);
 
             message.NumberOfTimesHandled.ShouldEqual(2);
             messageHandler.IsHandled.ShouldBeTrue();
@@ -67,11 +67,25 @@ namespace LightBus.Tests
             var serviceContainer = new ServiceContainer();
             var bus = new Mediator(serviceContainer.GetAllInstances);
             serviceContainer.Register<IMediator>(sf => bus);
-            serviceContainer.Register<IHandleRequests<Command, Unit>, CommandHandlerThatSendsAnEvent>();
-            serviceContainer.Register<IHandleEvents<EventWithCommand>, EventWithCommandHandler>();
+            serviceContainer.Register<IHandleRequestsAsync<Command, Unit>, Async.CommandHandlerThatSendsAnEvent>();
+            serviceContainer.Register<IHandleEventsAsync<EventWithCommand>, Async.EventWithCommandHandler>();
             var command = new Command();
 
-            bus.Send(command);
+            bus.SendAsync(command);
+
+            command.IsHandled.ShouldBeTrue();
+        }
+
+        [Fact]
+        public async Task When_sending_a_command_should_invoke_command_handler_and_be_able_to_wait_for_async_result()
+        {
+            var serviceContainer = new ServiceContainer();
+            var bus = new Mediator(serviceContainer.GetAllInstances);
+            serviceContainer.Register<IMediator>(sf => bus);
+            serviceContainer.Register<IHandleRequestsAsync<AsyncCommand, Unit>, Async.CommandHandlerWithDelay>();
+            var command = new AsyncCommand();
+
+            await bus.SendAsync(command);
 
             command.IsHandled.ShouldBeTrue();
         }
@@ -80,25 +94,25 @@ namespace LightBus.Tests
         public void When_sending_a_query_and_there_is_only_one_query_handler_should_invoke_query_handler()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<Query, Response>, QueryHandler>();
+            serviceContainer.Register<IHandleRequestsAsync<Query, Response>, Async.QueryHandler>();
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            var response = bus.Send(query);
+            var response = bus.SendAsync(query);
 
-            response.IsHandled.ShouldBeTrue();
+            response.Result.IsHandled.ShouldBeTrue();
         }
 
         [Fact]
         public void When_sending_a_query_and_there_are_multiple_query_handlers_should_throw_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<Query, Response>, QueryHandler>();
-            serviceContainer.Register<IHandleRequests<Query, Response>, AnotherQueryHandler>("another");
+            serviceContainer.Register<IHandleRequestsAsync<Query, Response>, Async.QueryHandler>();
+            serviceContainer.Register<IHandleRequestsAsync<Query, Response>, Async.AnotherQueryHandler>("another");
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(query));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query).Wait());
         }
 
         [Fact]
@@ -108,22 +122,22 @@ namespace LightBus.Tests
             var bus = new Mediator(serviceContainer.GetAllInstances);
             var query = new Query();
 
-            Assert.Throws<NotSupportedException>(() => bus.Send(query));
+            Assert.Throws<NotSupportedException>(() => bus.SendAsync(query).Wait());
         }
 
         [Fact]
         public void When_sending_the_same_event_multiple_times_should_get_handlers_from_cahce()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.RegisterAssembly(typeof(MediatorTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(IHandleEvents<>));
+            serviceContainer.RegisterAssembly(typeof (AsyncMediatorTests).Assembly, (serviceType, implementingType) => serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof (IHandleEventsAsync<>));
             IMediator mediator = new Mediator(serviceContainer.GetAllInstances);
             var message = new Event();
 
             Assert.DoesNotThrow(() =>
             {
-                mediator.Publish(message);
-                mediator.Publish(message);
-                mediator.Publish(message);
+                mediator.PublishAsync(message);
+                mediator.PublishAsync(message);
+                mediator.PublishAsync(message);
             });
         }
 
@@ -131,30 +145,30 @@ namespace LightBus.Tests
         public void When_command_handler_throws_exception_should_propagate_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<CommandWithException, Unit>, CommandHandlerThatThrowException>();
+            serviceContainer.Register<IHandleRequestsAsync<CommandWithException, Unit>, Async.CommandHandlerThatThrowException>();
             var bus = new Mediator(serviceContainer.GetAllInstances);
 
-            Assert.Throws<InvalidOperationException>(() => bus.Send(new CommandWithException()));
+            Assert.Throws<InvalidOperationException>(() => bus.SendAsync(new CommandWithException()).Wait());
         }
 
         [Fact]
         public void When_event_handler_throws_exception_should_propagate_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleEvents<EventWithException>, EventWithExceptionHandler>();
+            serviceContainer.Register<IHandleEventsAsync<EventWithException>, Async.EventWithExceptionHandler>();
             var bus = new Mediator(serviceContainer.GetAllInstances);
 
-            Assert.Throws<InvalidOperationException>(() => bus.Publish(new EventWithException()));
+            Assert.Throws<InvalidOperationException>(() => bus.PublishAsync(new EventWithException()).Wait());
         }
 
         [Fact]
         public void When_query_handler_throws_exception_should_propagate_exception()
         {
             var serviceContainer = new ServiceContainer();
-            serviceContainer.Register<IHandleRequests<QueryWithExcepetion, Response>, QueryWithExceptionHandler>();
+            serviceContainer.Register<IHandleRequestsAsync<QueryWithExcepetion, Response>, Async.QueryWithExceptionHandler>();
             var bus = new Mediator(serviceContainer.GetAllInstances);
 
-            Assert.Throws<InvalidOperationException>(() => bus.Send(new QueryWithExcepetion()));
+            Assert.Throws<InvalidOperationException>(() => bus.SendAsync(new QueryWithExcepetion()).Wait());
         }
     }
 }

@@ -54,12 +54,15 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="LightInject\LightInject.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="MediatorTests.cs" />
     <Compile Include="Handlers.cs" />
+    <Compile Include="LightInject\LightInject.cs" />
+    <Compile Include="MediatorTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AsyncMediatorTests.cs" />
+    <Compile Include="AsyncHandlers.cs" />
     <Compile Include="Messages.cs" />
     <Compile Include="Response.cs" />
+    <Compile Include="TaskExt.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\LightBus\LightBus.csproj">

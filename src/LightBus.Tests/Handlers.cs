@@ -1,38 +1,37 @@
-using System;
+﻿using System;
 using System.Threading.Tasks;
 
 namespace LightBus.Tests
 {
-    public class CommandHandler : IHandleRequestsAsync<Command, Unit>
+    public class CommandHandler : IHandleRequests<Command, Unit>
     {
-        public Task<Unit> HandleAsync(Command command)
+        public Unit Handle(Command command)
         {
             command.IsHandled = true;
-            return TaskExt.FromResult(Unit.Value);
+            return Unit.Value;
         }
     }
 
-    public class AnotherCommandHandler : IHandleRequestsAsync<Command, Unit>
+    public class AnotherCommandHandler : IHandleRequests<Command, Unit>
     {
-        public Task<Unit> HandleAsync(Command command)
+        public Unit Handle(Command command)
         {
             command.IsHandled = true;
-            return TaskExt.FromResult(Unit.Value);
+            return Unit.Value;
         }
     }
 
-    public class MessageHandler : IHandleEventsAsync<IEvent>
+    public class MessageHandler : IHandleEvents<IEvent>
     {
         public bool IsHandled { get; set; }
 
-        public Task HandleAsync(IEvent command)
+        public void Handle(IEvent @event)
         {
             IsHandled = true;
-            return TaskExt.FromResult();
         }
     }
 
-    public class CommandHandlerThatSendsAnEvent : IHandleRequestsAsync<Command, Unit>
+    public class CommandHandlerThatSendsAnEvent : IHandleRequests<Command, Unit>
     {
         private readonly IMediator _mediator;
 
@@ -41,87 +40,72 @@ namespace LightBus.Tests
             _mediator = mediator;
         }
 
-        public async Task<Unit> HandleAsync(Command command)
+        public Unit Handle(Command command)
         {
-            await _mediator.PublishAsync(new EventWithCommand {Command = command});
+            _mediator.Publish(new EventWithCommand { Command = command });
             return Unit.Value;
         }
     }
 
-    public class AsyncCommandHandler : IHandleRequestsAsync<AsyncCommand, Unit>
+    public class CommandHandlerThatThrowException : IHandleRequests<CommandWithException, Unit>
     {
-        public Task<Unit> HandleAsync(AsyncCommand command)
-        {
-            return TaskExt.Delay(50).ContinueWith(task =>
-            {
-                command.IsHandled = true;
-                return Unit.Value;
-            });
-        }
-    }
-
-    public class CommandHandlerThatThrowException : IHandleRequestsAsync<CommandWithException, Unit>
-    {
-        public Task<Unit> HandleAsync(CommandWithException message)
+        public Unit Handle(CommandWithException message)
         {
             throw new InvalidOperationException();
         }
     }
 
-    public class EventHandler : IHandleEventsAsync<Event>
+    public class EventHandler : IHandleEvents<Event>
     {
-        public Task HandleAsync(Event @event)
+        public void Handle(Event @event)
         {
             @event.NumberOfTimesHandled++;
-            return TaskExt.FromResult();
         }
     }
 
-    public class AnotherEventHandler : IHandleEventsAsync<Event>
+    public class AnotherEventHandler : IHandleEvents<Event>
     {
-        public Task HandleAsync(Event @event)
+        public void Handle(Event @event)
         {
             @event.NumberOfTimesHandled++;
-            return TaskExt.FromResult();
         }
     }
 
-    public class EventWithCommandHandler : IHandleEventsAsync<EventWithCommand>
+    public class EventWithCommandHandler : IHandleEvents<EventWithCommand>
     {
-        public Task HandleAsync(EventWithCommand @event)
+        public void Handle(EventWithCommand @event)
         {
             @event.Command.IsHandled = true;
-            return TaskExt.FromResult();
         }
     }
 
-    public class QueryHandler : IHandleRequestsAsync<Query, Response>
+    public class QueryHandler : IHandleRequests<Query, Response>
     {
-        public Task<Response> HandleAsync(Query query)
+        public Response Handle(Query query)
         {
-            return TaskExt.FromResult(new Response {IsHandled = true});
+            return new Response { IsHandled = true };
         }
     }
 
-    public class AnotherQueryHandler : IHandleRequestsAsync<Query, Response>
+    public class AnotherQueryHandler : IHandleRequests<Query, Response>
     {
-        public Task<Response> HandleAsync(Query query)
+        public Response Handle(Query query)
         {
-            return TaskExt.FromResult(new Response {IsHandled = true});
+            return new Response { IsHandled = true };
         }
     }
 
-    public class EventWithExceptionHandler : IHandleEventsAsync<EventWithException>
+    public class EventWithExceptionHandler : IHandleEvents<EventWithException>
     {
-        public Task HandleAsync(EventWithException message)
+        public void Handle(EventWithException @event)
         {
             throw new InvalidOperationException();
         }
     }
 
-    public class QueryWithExceptionHandler : IHandleRequestsAsync<QueryWithExcepetion, Response>
+    public class QueryWithExceptionHandler : IHandleRequests<QueryWithExcepetion, Response>
     {
-        public Task<Response> HandleAsync(QueryWithExcepetion query)
+        public Response Handle(QueryWithExcepetion query)
         {
             throw new InvalidOperationException();
         }
