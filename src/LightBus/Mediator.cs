@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 namespace LightBus
 {
     /// <summary>
-    /// A class that implements <see cref="IBus"/> that can be used to asynchronously send or publish commands, events and queries.
+    /// A class that implements <see cref="IMediator"/> that can be used to asynchronously send or publish commands, events and queries.
     /// </summary>
-    public class Bus : IBus
+    public class Mediator : IMediator
     {
         private readonly DependencyResolver _dependencyResolver;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Bus"/>.
+        /// Initializes a new instance of the <see cref="Mediator"/>.
         /// </summary>
         /// <param name="getAllInstancesOfType">The factory delegate used to resolve handlers.</param>
-        public Bus(Func<Type, IEnumerable<object>> getAllInstancesOfType)
+        public Mediator(Func<Type, IEnumerable<object>> getAllInstancesOfType)
         {
             _dependencyResolver = new DependencyResolver(getAllInstancesOfType);
         }
