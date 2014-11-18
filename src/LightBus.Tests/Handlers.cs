@@ -34,16 +34,16 @@ namespace LightBus.Tests
 
     public class CommandHandlerThatSendsAnEvent : IHandleMessages<Command>
     {
-        private readonly IBus _bus;
+        private readonly IMediator _mediator;
 
-        public CommandHandlerThatSendsAnEvent(IBus bus)
+        public CommandHandlerThatSendsAnEvent(IMediator mediator)
         {
-            _bus = bus;
+            _mediator = mediator;
         }
 
         public Task HandleAsync(Command command)
         {
-            return _bus.PublishAsync(new EventWithCommand {Command = command});
+            return _mediator.PublishAsync(new EventWithCommand {Command = command});
         }
     }
 
