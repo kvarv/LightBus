@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace LightBus
 {
     /// <summary>
-    /// A class that implements <see cref="IMediator"/> that can be used to send a request or publish an event.
+    /// A class that implements <see cref="IMediator"/> that can be used to send requests or publish events.
     /// </summary>
     public class Mediator : IMediator
     {
@@ -21,6 +21,12 @@ namespace LightBus
             _dependencyResolver = new DependencyResolver(getAllInstancesOfType);
         }
 
+        /// <summary>
+        /// Send a request (command or query).
+        /// </summary>
+        /// <typeparam name="TResponse">The response of the request.</typeparam>
+        /// <param name="request">The <see cref="IRequest{TResponse}"/> to send.</param>
+        /// <returns>The response.</returns>  
         public TResponse Send<TResponse>(IRequest<TResponse> request)
         {
             var queryType = request.GetType();
@@ -31,6 +37,10 @@ namespace LightBus
             return handler.Handle((dynamic)request);
         }
 
+        /// <summary>
+        /// Publish an event.
+        /// </summary>
+        /// <param name="event">The <see cref="IEvent"/> to publish.</param>
         public void Publish(IEvent @event)
         {
             var messageType = @event.GetType();
@@ -46,7 +56,7 @@ namespace LightBus
         }
 
         /// <summary>
-        /// Send a request as an asynchronous operation.
+        /// Send a request (command or query) as an asynchronous operation.
         /// </summary>
         /// <typeparam name="TResponse">The response of the request.</typeparam>
         /// <param name="request">The <see cref="IRequest{TResponse}"/> to send.</param>
