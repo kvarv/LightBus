@@ -10,9 +10,14 @@ properties {
 	$test_dir = "$build_artifacts_dir\tests"
 	$global:build_configuration = "debug"
 	$nuspec_file = "$build_artifacts_dir\LightBus.nuspec"
-    $version = if ($env:APPVEYOR_BUILD_VERSION -ne $NULL) { $env:APPVEYOR_BUILD_VERSION } else { '0.0.0' }
-    $assembly_version = $version -replace "\-.*$", ".0"
-    $assembly_file_version = $version -replace "-[^0-9]*", "."
+
+
+	$json = Get-Content $base_dir\semver.json -Raw | ConvertFrom-Json
+    $semver = $json.major.ToString() + "." + $json.minor + "." + $json.patch
+    $revision = if ($env:APPVEYOR_BUILD_VERSION -ne $NULL) { $env:APPVEYOR_BUILD_VERSION } else { 0 }
+    $build_number = "$semver+$revision"
+    $assembly_version = $json.major.ToString() + "." + $json.minor + ".0.0"
+    $assembly_file_version = ($semver -replace "\-.*$", "") + ".$revision"
 }
 
 task default -depends compile, test
@@ -26,7 +31,7 @@ task mark_release {
 task clean {
 	Write-Host "Build version is: $env:APPVEYOR_BUILD_VERSION"
 	Write-Host "Build number is: $env:APPVEYOR_BUILD_NUMBER"
-	
+
 	rd $build_artifacts_dir -recurse -force  -ErrorAction SilentlyContinue | out-null
 	mkdir $build_artifacts_dir  -ErrorAction SilentlyContinue  | out-null
 }
@@ -36,10 +41,10 @@ task compile -depends clean, restore_packages {
 }
 
 task restore_packages {
-	exec { & $tools_dir\nuget\nuget.exe restore $source_dir\LightBus.sln }	
+	exec { & $tools_dir\nuget\nuget.exe restore $source_dir\LightBus.sln }
 }
 
-task test {	
+task test {
     exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net40\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
 }
 
@@ -65,11 +70,11 @@ task create_nuspec {
         <description>LightBus is a lightweight in-process bus.</description>
         <copyright>Gøran Sveia Kvarv</copyright>
         <tags>bus mediator event command query cqrs</tags>
-    </metadata>   
+    </metadata>
     <files>
         <file src=""$build_artifacts_dir\LightBus\net40\$build_configuration\LightBus.dll"" target=""lib\net40""/>
     </files>
-</package>" 
+</package>"
 
 	$nuspec | out-file $nuspec_file -encoding utf8
 }
@@ -88,5 +93,5 @@ task create_common_assembly_info {
 [assembly: AssemblyConfigurationAttribute(""$build_configuration"")]
 [assembly: AssemblyInformationalVersionAttribute(""$commit"")]"
 
-	$asmInfo | out-file "$source_dir\CommonAssemblyInfo.cs" -encoding utf8    
+	$asmInfo | out-file "$source_dir\CommonAssemblyInfo.cs" -encoding utf8
 }
