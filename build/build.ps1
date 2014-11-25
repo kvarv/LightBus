@@ -14,7 +14,7 @@ properties {
 
 	$json = Get-Content $base_dir\semver.json -Raw | ConvertFrom-Json
     $semver = $json.major.ToString() + "." + $json.minor + "." + $json.patch
-    $revision = if ($env:APPVEYOR_BUILD_VERSION -ne $NULL) { $env:APPVEYOR_BUILD_VERSION } else { 0 }
+    $revision = if ($env:APPVEYOR_BUILD_NUMBER -ne $NULL) { $env:APPVEYOR_BUILD_NUMBER } else { 0 }
     $build_number = "$semver+$revision"
     $assembly_version = $json.major.ToString() + "." + $json.minor + ".0.0"
     $assembly_file_version = ($semver -replace "\-.*$", "") + ".$revision"
@@ -29,9 +29,6 @@ task mark_release {
 }
 
 task clean {
-	Write-Host "Build version is: $env:APPVEYOR_BUILD_VERSION"
-	Write-Host "Build number is: $env:APPVEYOR_BUILD_NUMBER"
-
 	rd $build_artifacts_dir -recurse -force  -ErrorAction SilentlyContinue | out-null
 	mkdir $build_artifacts_dir  -ErrorAction SilentlyContinue  | out-null
 }
