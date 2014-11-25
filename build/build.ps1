@@ -48,7 +48,7 @@ task test {
     exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net40\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
 }
 
-task create_package -depends mark_release, create_common_assembly_info, compile, test, create_nuspec, reset_assembly_info -precondition {
+task create_package -depends mark_release, create_common_assembly_info, compile, test, create_nuspec, reset_assembly_info {
 	exec { & $tools_dir\nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
 }
 
