@@ -48,7 +48,7 @@ task test {
     exec { & $tools_dir\xunit\xunit.console.clr4.exe $test_dir\net40\$build_configuration\LightBus.Tests.dll /xml $test_dir\tests_results.xml }
 }
 
-task create_package -depends mark_release, create_common_assembly_info, compile, test, create_nuspec, reset_assembly_info -precondition { return $version -ne ''} {
+task create_package -depends mark_release, create_common_assembly_info, compile, test, create_nuspec, reset_assembly_info -precondition {
 	exec { & $tools_dir\nuget\nuget.exe pack $nuspec_file -OutputDirectory $build_artifacts_dir}
 }
 
@@ -61,7 +61,7 @@ task create_nuspec {
 <package xmlns=""http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd"">
     <metadata>
         <id>LightBus</id>
-        <version>$version</version>
+        <version>$semver</version>
         <authors>Gøran Sveia Kvarv</authors>
         <owners>Gøran Sveia Kvarv</owners>
         <licenseUrl>http://www.apache.org/licenses/LICENSE-2.0</licenseUrl>
